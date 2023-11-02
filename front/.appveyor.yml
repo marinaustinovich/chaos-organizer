@@ -1,0 +1,37 @@
+image: Ubuntu2004
+
+stack: node 19
+
+branches:
+  only:
+    - main
+
+cache:
+  - node_modules
+  - front/node_modules 
+
+install:
+  - cd front && npm install 
+  - cd .. 
+
+build: off
+
+build_script:
+  - cd front && npm run build  
+  - cd ..  
+
+test_script:
+  - cd front && npm run lint && npm run test  
+  - cd ..  
+
+  deploy_script: 
+  - git config --global credential.helper store
+  - git config --global user.name marinaustinovich
+  - git config --global user.email marishka0509@mail.ru
+  - echo "https://$GITHUB_TOKEN:x-oauth-basic@github.com">"$HOME/.git-credentials"
+  - cd front
+  - npx push-dir --dir=dist --branch=gh-pages --force --verbose
+  - cd ..
+  
+
+

@@ -1,0 +1,51 @@
+.registration .nav-tabs .nav-item {
+    width: 50%;
+    position: relative;
+}
+
+#login .row {
+    flex-wrap: wrap;
+    margin-top: 3rem;
+}
+
+#signin .row {
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+#login .row .col, #signin .row .col {
+    width: 100%;
+    flex-basis: auto;
+    margin-bottom: 1.5rem;
+}
+
+#login .btn, #signin .btn {
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+    width: 90%;
+    background: #196fd1;
+    color: white;
+}
+
+.form-error {
+    position: absolute;
+    padding: 5px 10px;
+    width: 150px;
+    background: #fff;
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    border: solid 1px burlywood;
+}
+
+.wrong-field {
+    border-bottom: 2px solid red!important;
+}
+
+.registration .spinner-border {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    top: 10rem;
+    left: 7rem;
+}

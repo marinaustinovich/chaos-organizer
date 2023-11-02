@@ -1,0 +1,373 @@
+.chat-window {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 80%;
+    height: 92%;
+    padding: 10px;
+    margin: auto;
+    background-color: #fff;
+    border: 1px solid black;
+    border-radius: 12px;
+  }
+  
+  .messages {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    height: 80%;
+    padding: 10px;
+    overflow-y: scroll;
+  }
+  
+  .create-post {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+  }
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-action {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.search-button {
+    background: url("../../../img/magnifying-glass-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+.upload-button {
+    background: url("../../../img/clip-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+.more-button {
+    background: url("../../../img/hamburger-button-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    right: 0;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #ccc;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#post-content {
+    width: 70%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 60px;
+    resize: none;
+    overflow: auto;
+}
+
+#post-content:focus {
+    outline: none;
+    border: none;
+    box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.25);;
+}
+
+.post-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-media {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border: none;
+    transform: translateY(-50%);
+    margin-top: 2rem;
+}
+
+.btn-media:hover {
+    background-color: rgb(147, 147, 219);
+    border-radius: 50%;
+}
+
+.media-button-wrapper {
+    display: flex;
+}
+
+button.audio-button {
+    background: url("../../../img/audio-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+button.video-button {
+    background: url("../../../img/video-camera-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+  /* for audio action */
+.media-action-wrapper {
+    display: none;
+}
+
+button.start-media {
+    background: url("../../../img/start-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+button.stop-media {
+    background: url("../../../img/stop-icon_32.png") center no-repeat;
+    background-size: contain;
+}
+
+.timer {
+    font-size: 1.5rem;
+}
+
+/* for post element */
+.post {
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #fff;
+    width: 70%;
+    margin-bottom: 1.5rem;
+    margin-left: auto;
+}
+
+.post-date {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #777;
+}
+
+.post-content {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.text-post {
+    text-align: left;
+}
+
+.geodata {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 12px;
+    color: #777;
+}
+
+.geodata-icon {
+    position: relative;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: url('../../../img/geo-fill-icon_32.png') center no-repeat;
+    background-size: contain;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.btn-media:focus {
+    background-color: #d7ebfc;
+    outline: none;
+}
+
+.geo {
+    padding: 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+}
+
+audio {
+    width: 100%;
+    height: 30px;
+    margin-top: 10px;
+}
+
+video {
+    width: 100%;
+    margin-top: 10px;
+    
+}
+
+  /* for modal */
+.modal-chat {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    border-radius: 10px;
+    background-color: #fff;
+    margin: 15% auto 1% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.modal-chat h4 {
+    margin-bottom: 10px;
+    
+}
+
+.modal-chat p {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.modal-chat label {
+    display: block;
+    text-align: left;
+}
+
+.geo-input {
+    border: 1px solid black;
+    padding: 0.5rem;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.close-geo, .add-geo {
+    border: 1px solid black;
+    padding: 0.5rem;
+    border-radius: 7px;
+    margin: 5px;
+}
+
+.btn-modal-wrapper {
+    display: flex;
+    justify-content: end;
+}
+
+.emoji-button-wrapper {
+    position: relative;
+}
+
+.emoji-button {
+    width: 40px;
+    height:40px;
+    background-color: transparent;
+    background:url('../../../img/normal-smile-icon.png') center no-repeat;
+    background-size: contain;
+    margin-left: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.emoji-button.active {
+    background-image: url('../../../img/active-smile-icon.png')  center no-repeat;
+}
+
+.emoji-window {
+    position: absolute;
+    width: 250px;
+    height: 200px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    overflow-y: auto;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.emoji-picker button {
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.emoji-picker button:hover {
+    transform: scale(1.2);
+}

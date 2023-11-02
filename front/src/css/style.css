@@ -13,14 +13,13 @@ body {
 
 
 .container {
-  height: 95vh;
+  height: 93vh;
   min-width: 320px;
   overflow: hidden;
   background-color: #bfd3f840;
   border: 1px solid #2f90f3;
   border-radius: 0.75rem;
   padding: 1rem;
-  margin-bottom: 1rem;
 }
 
 .header {

@@ -1,6 +1,6 @@
 import ModalGeo from './ModalGeo/ModalGeo';
 import ModalMedia from './media/ModalMedia';
-import { startTimer, stopTimer } from './media/getTimeMedia';
+import { startTimer, stopTimer } from '../../utils/timer';
 import Post from './Post';
 
 import './chat.css';
@@ -88,33 +88,33 @@ export default class Chat {
       </div>
     `;
 
+    this.modalWindow = this.container.querySelector('.modal-window');
     this.messages = this.container.querySelector('.messages');
+    this.messageForm = this.container.querySelector('.message-form');
+    this.textarea = this.container.querySelector('#post-content');
+    this.startButton = this.container.querySelector('.start-media');
+    this.stopButton = this.container.querySelector('.stop-media');
+    this.audioButton = this.container.querySelector('.audio-button');
+    this.videoButton = this.container.querySelector('.video-button');
+    this.emojiButton = this.container.querySelector('.emoji-button');
+    this.emojiWindow = this.container.querySelector('.emoji-window');
+    this.emojiPicker = this.container.querySelector('.emoji-picker');
+  }
+
+  addEvents() {
+    this.textarea.addEventListener('input', () => this.changeHeightTextarea());
+    this.textarea.addEventListener('keydown', (e) => this.addPost(e));
+    this.textarea.addEventListener('click', () => this.closeEmojiWindow());
+    this.audioButton.addEventListener('click', () => this.writeMedia({ audio: true, video: false }));
+    this.videoButton.addEventListener('click', () => this.writeMedia({ audio: true, video: true }));
+    this.startButton.addEventListener('click', () => this.startRecording());
+    this.stopButton.addEventListener('click', () => this.stopRecording());
+    this.emojiButton.addEventListener('click', () => this.toggleEmojiButton());
+    this.emojiPicker.addEventListener('click', (event) => this.addEmoji(event));
   }
 
   addSavedPosts() {
     this.posts.forEach((post) => new Post(post));
-  }
-
-  addEvents() {
-    this.container.querySelector('.message-form').addEventListener('submit', (e) => this.onSubmit(e));
-    this.textarea = document.getElementById('post-content');
-    const audioButton = document.querySelector('.audio-button');
-    const videoButton = document.querySelector('.video-button');
-    this.startButton = this.container.querySelector('.start-media');
-    this.stopButton = this.container.querySelector('.stop-media');
-    this.emojiButton = document.querySelector('.emoji-button');
-    this.emojiWindow = document.querySelector('.emoji-window');
-    this.emojiPicker = document.querySelector('.emoji-picker');
-
-    this.startButton.addEventListener('click', () => this.startRecording());
-    this.stopButton.addEventListener('click', () => this.stopRecording());
-    this.textarea.addEventListener('input', () => this.changeHeightTextarea());
-    this.textarea.addEventListener('keydown', (e) => this.addPost(e));
-    this.textarea.addEventListener('click', () => this.closeEmojiWindow());
-    audioButton.addEventListener('click', () => this.writeAudio());
-    videoButton.addEventListener('click', () => this.writeVideo());
-    this.emojiButton.addEventListener('click', () => this.toggleEmojiButton());
-    this.emojiPicker.addEventListener('click', (event) => this.addEmoji(event));
   }
 
   changeHeightTextarea() {
@@ -131,21 +131,23 @@ export default class Chat {
   async addPost(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const result = await this.getGeoData();
+      const geoData = await this.getGeoData();
+      if (geoData) {
+        const request = {
+          type: 'post',
+          user: {
+            name: this.user.name,
+            userId: this.user.id,
+          },
+          message: {
+            text: this.textarea.value,
+            location: geoData,
+          },
+        };
 
-      const request = {
-        type: 'post',
-        user: {
-          name: this.user.name,
-          userId: this.user.id,
-        },
-        message: {
-          text: this.textarea.value,
-          location: result,
-        },
-      };
-
-      Chat.handleSendMessage(request);
+        Chat.handleSendMessage(request);
+      }
+      this.textarea.value = '';
     }
   }
 
@@ -172,26 +174,78 @@ export default class Chat {
   }
 
   showModalGeo() {
-    const modalGeo = new ModalGeo(
-      this.container.querySelector('.modal-window'),
-    );
+    const modalGeo = new ModalGeo(this.modalWindow);
 
     return modalGeo.waitForOk();
   }
 
-  writeAudio() {
+  writeMedia(constraints) {
     this.toggleMediaButtonVisibility();
-    this.setupMediaRecorder({ audio: true });
-  }
-
-  writeVideo() {
-    this.toggleMediaButtonVisibility();
-    this.setupMediaRecorder({ audio: true, video: true });
+    this.setupMediaRecorder(constraints);
   }
 
   toggleMediaButtonVisibility() {
     this.container.querySelector('.media-button-wrapper').style.display = 'none';
     this.container.querySelector('.media-action-wrapper').style.display = 'flex';
+  }
+
+  async setupMediaRecorder(constraints) {
+    this.startButton.disabled = true;
+    this.chunks = [];
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.recorder = new MediaRecorder(stream);
+
+      this.recorder.addEventListener('start', () => console.log('start media'));
+      this.recorder.addEventListener('dataavailable', (event) => this.chunks.push(event.data));
+      this.recorder.addEventListener('stop', () => this.handleRecordingStop(constraints));
+
+      this.startButton.disabled = false;
+    } catch {
+      this.handleError();
+    }
+  }
+
+  handleRecordingStop(constraints) {
+    stopTimer('#timer');
+    console.log(constraints);
+    this.constraints = constraints;
+  }
+
+  handleError() {
+    this.startButton.disabled = false;
+    this.modalMedia = new ModalMedia(this.modalWindow);
+  }
+
+  static createMediaUrl(chunks, constraints) {
+    const mediaType = constraints.video
+      ? 'video/webm'
+      : 'audio/ogg; codecs=opus';
+    const blob = new Blob(chunks, { type: mediaType });
+    return URL.createObjectURL(blob);
+  }
+
+  startRecording() {
+    if (!this.recorder) {
+      return;
+    }
+
+    this.startButton.disabled = true;
+    this.stopButton.disabled = false;
+
+    this.recorder.start();
+    startTimer('#timer');
+  }
+
+  stopRecording() {
+    this.startButton.disabled = false;
+    this.stopButton.disabled = true;
+
+    if (this.recorder && this.recorder.state !== 'inactive') {
+      console.log('stop', this.recorder);
+      this.recorder.stop();
+    }
   }
 
   toggleEmojiButton() {
@@ -206,92 +260,22 @@ export default class Chat {
     }
   }
 
-  async setupMediaRecorder(constraints) {
-    // Блокируем кнопку "Start" в начале функции
-    this.startButton.disabled = true;
-    let chunks = [];
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      this.mediaRecorder = new MediaRecorder(stream);
-
-      this.mediaRecorder.addEventListener('dataavailable', (event) => chunks.push(event.data));
-
-      this.mediaRecorder.addEventListener('stop', async () => {
-        stopTimer();
-
-        const result = await this.getGeoData();
-        const request = {
-          type: 'post',
-          user: {
-            name: this.user.name,
-            userId: this.user.id,
-          },
-          message: {
-            text: this.textarea.value,
-            location: result,
-          },
-        };
-
-        Chat.handleSendMessage(request, chunks, constraints);
-
-        chunks = [];
-        this.container.querySelector('.media-button-wrapper').style.display = 'block';
-        this.container.querySelector('.media-action-wrapper').style.display = 'none';
-      });
-      // Разблокируем кнопку "Start" после успешной инициализации mediaRecorder
-      this.startButton.disabled = false;
-    } catch (error) {
-      console.error('Ошибка при получении доступа к микрофону или камере:', error);
-      this.startButton.disabled = false;
-      const modalMedia = new ModalMedia(this.container.querySelector('.modal-window'));
-      console.log(modalMedia);
-    }
-  }
-
-  static createMediaBlob(chunks, constraints) {
-    const mediaType = constraints.video ? 'video/webm' : 'audio/ogg; codecs=opus';
-    const blob = new Blob(chunks, { type: mediaType });
-    console.log('blob', blob);
-    return blob;
-  }
-
-  startRecording() {
-    if (this.mediaRecorder) {
-      this.startButton.disabled = true;
-      this.stopButton.disabled = false;
-
-      this.mediaRecorder.start();
-      startTimer();
-    } else {
-      console.error('Ошибка: mediaRecorder не определен');
-    }
-  }
-
-  stopRecording() {
-    this.startButton.disabled = false;
-    this.stopButton.disabled = true;
-
-    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-      this.mediaRecorder.stop();
-    }
-  }
-
-  static async handleSendMessage(dataMessage, mediaChunks = null, mediaType = null) {
+  static async handleSendMessage(dataMessage) {
     const formData = new FormData();
     formData.append('message', JSON.stringify(dataMessage));
-    if (mediaChunks && mediaType) {
+    if (this.mediaChunks && this.mediaType) {
       let type;
-      console.log('media');
-      if (mediaType.video) {
+      if (this.mediaType.video) {
         type = 'video';
       } else {
-        console.log('audio');
         type = 'audio';
       }
 
-      const mediaFile = new File([mediaChunks], 'media', { type: mediaType.type });
-      console.log('mediaFile', mediaFile);
+      const mediaFile = new File([this.chunks], 'media', {
+        type: this.mediaType.type,
+      });
       formData.append(type, mediaFile);
+      this.chunks = [];
     }
 
     console.log('formData', formData);
@@ -301,15 +285,16 @@ export default class Chat {
     });
     console.log('resultFetch', resultFetch);
     if (resultFetch.ok) {
-      const text = await resultFetch.text();
-      console.log(text);
-      // const newMessage = await resultFetch.json();
-      // console.log('newMessage', newMessage);
-      // const post = new Post(newMessage);
+      // const text = await resultFetch.text();
+      // console.log(text);
+      const newMessage = await resultFetch.json();
+      console.log('newMessage', newMessage);
+      const post = new Post(newMessage);
+      console.log('post', post);
     } else {
       console.error('Error:', resultFetch.status);
     }
-    // const messageJson = JSON.stringify(dataMessage);
-    // this.socket.send(messageJson);
+    const messageJson = JSON.stringify(dataMessage);
+    this.socket.send(messageJson);
   }
 }

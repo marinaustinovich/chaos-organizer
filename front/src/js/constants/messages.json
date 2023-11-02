@@ -8,6 +8,10 @@
   "ERROR_TRY_AGAIN": "An error occurred, please try again.",
   "ERROR_GOING_WRONG": "Something went wrong",
   "ERROR_NO_COORDS": "Unfortunately, we were unable to determine your location, please give permission to use geolocation, or enter the coordinates manually",
+  "ERROR_MEDIA_PERMISSION": "Please give permission to use audio or video, or use a different browser",
   "LABEL_COORDS": "Latitude and longitude separated by commas",
-  "PLACEHOLDER_COORDS": "1.50851, −0.12572"
+  "LABEL_MEDIA": "To change the permission settings for this site, follow these steps: Open the site's page. Find the 'lock' icon to the left of the browser's address bar. Click on the 'lock' icon and select 'Site Settings' or 'Permissions' (depending on your browser). Locate the microphone/camera setting and change it to 'Allow'. Close the settings and refresh the page. The site should now have access to your microphone/camera.",
+  "PLACEHOLDER_COORDS": "51.50851, -0.12572",
+  "BUTTON_CLOSE": "CLOSE",
+  "BUTTON_OK": "OK"
 }

@@ -263,7 +263,6 @@ video {
     
 }
 
-  /* for modal */
 .modal-chat {
     display: block;
     position: fixed;
@@ -303,14 +302,8 @@ video {
     text-align: left;
 }
 
-.geo-input {
-    border: 1px solid black;
-    padding: 0.5rem;
-    width: 100%;
-    margin-top: 10px;
-}
 
-.close-geo, .add-geo {
+.close {
     border: 1px solid black;
     padding: 0.5rem;
     border-radius: 7px;

@@ -53,11 +53,11 @@ export default class ModalGeo {
               children: [
                 (this.closeButton = createElement('button', {
                   classes: ['close-geo'],
-                  textContent: 'Отмена',
+                  textContent: messages.BUTTON_CLOSE,
                 })),
                 (this.addButton = createElement('button', {
                   classes: ['add-geo'],
-                  textContent: 'Ok',
+                  textContent: messages.BUTTON_OK,
                 })),
               ],
             }),

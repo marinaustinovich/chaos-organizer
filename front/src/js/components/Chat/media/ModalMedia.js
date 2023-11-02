@@ -1,3 +1,6 @@
+import { messages } from '../../../constants';
+import createElement from '../../../utils/createDOM';
+
 export default class ModalMedia {
   constructor(container) {
     if (!(container instanceof HTMLElement)) {
@@ -5,36 +8,30 @@ export default class ModalMedia {
     }
 
     this.container = container;
+    this.init();
+  }
+
+  init() {
     this.drawUi();
     this.events();
   }
 
   drawUi() {
-    this.container.innerHTML = `
-      <div id="modal" class="modal-chat ">
-        <div class="modal-content">
-          <h4>Что-то пошло не так</h2>
-          <p>Пожалуйста, дайте разрешение на использование аудио- или видеозаписи, либо используйте другой браузер</p>
-          <p>
-            Чтобы изменить настройки разрешений для данного сайта, следуйте этим шагам:
+    const heading = createElement('h4', { textContent: messages.ERROR_GOING_WRONG });
+    const paragraph1 = createElement('p', { textContent: messages.ERROR_MEDIA_PERMISSION });
+    const paragraph2 = createElement('p', { textContent: messages.LABEL_MEDIA });
+    const btnWrapper = createElement('div', { classes: ['btn-modal-wrapper'] });
+    const closeButton = createElement('button', { classes: ['close'], textContent: messages.BUTTON_CLOSE });
+    const modalContent = createElement('div', { classes: ['modal-content'], children: [heading, paragraph1, paragraph2, btnWrapper] });
+    const modal = createElement('div', { classes: ['modal-chat'], children: [modalContent] });
 
-            Откройте страницу сайта, для которого вы хотите изменить разрешения.
-            Найдите значок "замка" слева от адресной строки браузера.
-            Нажмите на значок "замка" и выберите "Настройки сайта" или "Разрешения" (зависит от браузера).
-            Найдите настройку микрофона/камеры и измените ее на "Разрешить".
-            Закройте настройки и обновите страницу. Теперь сайт должен иметь доступ к микрофону/камере.
-          </p>
-          <div class="btn-modal-wrapper">
-            <button class="close-geo">Закрыть</button>
-          </div>
-        </div>
-      </div>
-    `;
+    btnWrapper.appendChild(closeButton);
+    this.container.appendChild(modal);
+    this.closeButton = closeButton;
   }
 
   events() {
-    const closeButton = document.querySelector('.close-geo');
-    closeButton.addEventListener('click', () => this.closeModal());
+    this.closeButton.addEventListener('click', () => this.closeModal());
   }
 
   closeModal() {

@@ -1,4 +1,4 @@
-import isValidPassword from '../utils/validation';
+import { isValidPassword } from '../utils/validation';
 
 describe('isValidPassword', () => {
   it('should return true for valid passwords', () => {

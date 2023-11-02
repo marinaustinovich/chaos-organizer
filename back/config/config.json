@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "MarinaUstsinovich",
+    "password": "EcnbyjdbxVB1",
+    "database": "organizer",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "MarinaUstsinovich",
+    "password": "EcnbyjdbxVB1",
+    "database": "organizer",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "MarinaUstsinovich",
+    "password": "EcnbyjdbxVB1",
+    "database": "organizer",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}

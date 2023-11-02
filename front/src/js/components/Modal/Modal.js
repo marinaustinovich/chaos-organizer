@@ -1,6 +1,7 @@
 import WebSocketClient from '../../api/WebSocket';
 import isValidPassword from '../../utils/validation';
 import UIModal from './UIModal';
+import { messages, formId } from '../../constants';
 
 import './modal.css';
 
@@ -63,7 +64,7 @@ export default class Modal {
 
   handlePasswordAgainInput = () => {
     if (this.passwordInputSignin.value !== this.passwordAgainInput.value) {
-      this.showError('Passwords do not match.');
+      this.showError(messages.PASSWORDS_NOT_MATCH);
     } else {
       this.hideError();
     }
@@ -78,14 +79,14 @@ export default class Modal {
     const { name, password, passwordAgain } = form.elements;
 
     if (!name.value || !password.value) {
-      this.showError('Please enter your name and password');
+      this.showError(messages.EMPTY_FIELDS);
       return;
     }
 
-    if (form.id === 'signin' && !this.validatePassword()) return;
+    if (form.id === formId.SIGNIN && !this.validatePassword()) return;
 
-    if (form.id === 'signin' && password.value !== passwordAgain.value) {
-      this.showError('Passwords do not match.');
+    if (form.id === formId.SIGNIN && password.value !== passwordAgain.value) {
+      this.showError(messages.PASSWORDS_NOT_MATCH);
       return;
     }
 
@@ -99,15 +100,13 @@ export default class Modal {
       form.reset();
     } catch (error) {
       console.error(error);
-      this.showError('An error occurred, please try again.');
+      this.showError(messages.ERROR_TRY_AGAIN);
     }
   };
 
   validatePassword = () => {
     if (!isValidPassword(this.passwordInputSignin.value)) {
-      this.showError(
-        'Password should be at least 8 characters long and contain only Latin letters and digits.',
-      );
+      this.showError(messages.INVALID_PASSWORD);
 
       return false;
     }

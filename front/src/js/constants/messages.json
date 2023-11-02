@@ -1,0 +1,7 @@
+{
+    "EMPTY_FIELDS": "Please enter your name and password",
+    "PASSWORDS_NOT_MATCH": "Passwords do not match.",
+    "INVALID_PASSWORD": "Password should be at least 8 characters long and contain only Latin letters and digits.",
+    "ERROR_TRY_AGAIN": "An error occurred, please try again."
+  }
+  

@@ -1,3 +1,5 @@
+import { formId } from '../../constants';
+
 class UIModal {
   constructor(container) {
     this.container = container;
@@ -66,7 +68,7 @@ class UIModal {
     tabContent.id = 'myTabContent';
 
     const loginTabPane = UIModal.createTabPane('home', true);
-    const loginForm = UIModal.createForm('login', [
+    const loginForm = UIModal.createForm(formId.LOGIN, [
       {
         name: 'name', type: 'text', placeholder: 'Name', autocomplete: 'username',
       },
@@ -79,7 +81,7 @@ class UIModal {
     tabContent.appendChild(loginTabPane);
 
     const signinTabPane = UIModal.createTabPane('profile');
-    const signinForm = UIModal.createForm('signin', [
+    const signinForm = UIModal.createForm(formId.SIGNIN, [
       {
         name: 'name', type: 'text', placeholder: 'Name', autocomplete: 'username',
       },

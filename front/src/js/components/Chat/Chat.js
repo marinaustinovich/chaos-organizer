@@ -1,8 +1,8 @@
-import getCurrentPositions from './geolocation/getCurrentPositions';
-import ModalGeo from './geolocation/ModalGeo';
+import ModalGeo from './ModalGeo/ModalGeo';
 import ModalMedia from './media/ModalMedia';
 import { startTimer, stopTimer } from './media/getTimeMedia';
 import Post from './Post';
+
 import './chat.css';
 // import mergeMessages from './mergeMessages';
 // import sortMessagesByDate from './sortMessagesByDate';
@@ -27,6 +27,7 @@ export default class Chat {
 
   drawUi() {
     this.container.innerHTML = `
+      <div class="modal-window"></div>
       <div class="chat-window">
         <section class="chat-header">
           <div class="user-info">
@@ -149,11 +150,33 @@ export default class Chat {
   }
 
   async getGeoData() {
-    if (navigator.geolocation) {
-      return getCurrentPositions();
+    if ('geolocation' in navigator) {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(pos.coords),
+            (error) => reject(error),
+          );
+        });
+        const coordinates = {
+          latitude: position.latitude,
+          longitude: position.longitude,
+        };
+        return coordinates;
+      } catch {
+        return this.showModalGeo();
+      }
+    } else {
+      return this.showModalGeo();
     }
-    const modalGeo = new ModalGeo(this.container.querySelector('.modal-window'));
-    return modalGeo.getCoords();
+  }
+
+  showModalGeo() {
+    const modalGeo = new ModalGeo(
+      this.container.querySelector('.modal-window'),
+    );
+
+    return modalGeo.waitForOk();
   }
 
   writeAudio() {

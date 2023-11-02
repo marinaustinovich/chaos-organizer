@@ -1,5 +1,5 @@
 import WebSocketClient from '../../api/WebSocket';
-import isValidPassword from '../../utils/validation';
+import { isValidPassword } from '../../utils/validation';
 import UIModal from './UIModal';
 import { messages, formId } from '../../constants';
 
@@ -99,7 +99,6 @@ export default class Modal {
       this.hideError();
       form.reset();
     } catch (error) {
-      console.error(error);
       this.showError(messages.ERROR_TRY_AGAIN);
     }
   };
@@ -107,9 +106,9 @@ export default class Modal {
   validatePassword = () => {
     if (!isValidPassword(this.passwordInputSignin.value)) {
       this.showError(messages.INVALID_PASSWORD);
-
       return false;
     }
+
     this.hideError();
     return true;
   };

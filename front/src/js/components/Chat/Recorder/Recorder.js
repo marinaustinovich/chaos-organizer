@@ -163,4 +163,8 @@ export default class Recorder {
   getMediaFile() {
     return this.mediaFile;
   }
+
+  reset() {
+    this.mediaFile = null;
+  }
 }

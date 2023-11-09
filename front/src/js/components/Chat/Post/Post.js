@@ -8,6 +8,7 @@ export default class Post {
     this.data = data;
     if (this.data.video) this.mediaUrl = data.video;
     if (this.data.audio) this.mediaUrl = data.audio;
+    if (this.data.file) this.fileSrc = data.file;
 
     this.userId = data.userId;
     this.post = null;
@@ -30,6 +31,10 @@ export default class Post {
       ? this.createMediaElement()
       : document.createDocumentFragment();
 
+    const file = this.fileSrc
+      ? this.createFileElement()
+      : document.createDocumentFragment();
+
     const geodata = createElement('div', {
       classes: ['geodata'],
       textContent: `[${this.data.location.latitude}, ${this.data.location.longitude}] `,
@@ -42,7 +47,7 @@ export default class Post {
 
     this.post = createElement('div', {
       classes: ['post'],
-      children: [date, textPost, media, geodata],
+      children: [date, textPost, file, media, geodata],
     });
 
     this.posts = document.getElementById('posts');
@@ -79,6 +84,37 @@ export default class Post {
     }
 
     return mediaFragment;
+  }
+
+  createFileElement() {
+    const fileFragment = document.createDocumentFragment();
+
+    if (this.data.file) {
+      const fileExtension = this.data.file.split('.').pop().toLowerCase();
+      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'ico', 'webp'];
+
+      if (imageExtensions.includes(fileExtension)) {
+        const image = createElement('img', {
+          classes: ['post-image'],
+          attributes: {
+            src: this.data.file,
+            alt: 'Uploaded image',
+          },
+        });
+        fileFragment.appendChild(image);
+      } else if (fileExtension === 'pdf') {
+        const pdf = createElement('embed', {
+          classes: ['post-pdf'],
+          attributes: {
+            src: this.data.file,
+            type: 'application/pdf',
+          },
+        });
+        fileFragment.appendChild(pdf);
+      }
+    }
+
+    return fileFragment;
   }
 
   static scrollToTop() {

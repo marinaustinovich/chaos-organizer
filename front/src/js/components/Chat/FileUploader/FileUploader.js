@@ -75,4 +75,8 @@ export default class FileUploader {
   getUploadedFile() {
     return this.uploadedFile;
   }
+
+  reset() {
+    this.uploadedFile = null;
+  }
 }

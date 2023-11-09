@@ -128,6 +128,7 @@ export default class Chat {
             ? 'video'
             : 'audio';
           post[mediaType] = this.mediaFile;
+          this.recorder.reset();
           this.mediaFile = null;
         }
 
@@ -136,6 +137,7 @@ export default class Chat {
         if (this.uploadedFile) {
           post.file = this.uploadedFile;
           this.uploadedFile = null;
+          this.uploadElement.reset();
         }
 
         Chat.handleSendMessage(post);
@@ -184,16 +186,12 @@ export default class Chat {
       method: 'POST',
       body: formData,
     });
-    console.log('resultFetch', resultFetch);
+
     if (resultFetch.ok) {
       const newMessage = await resultFetch.json();
-      console.log('newMessage', newMessage);
-      const post = new Post(newMessage);
-      console.log('post', post);
+      this.newPost = new Post(newMessage);
     } else {
       console.error('Error:', resultFetch.status);
     }
-    // const messageJson = JSON.stringify(data);
-    // this.socket.send(messageJson);
   }
 }

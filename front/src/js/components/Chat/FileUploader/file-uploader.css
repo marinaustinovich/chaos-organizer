@@ -1,0 +1,20 @@
+.upload-wrapper {
+  position: relative;
+}
+
+.upload-button {
+  background: url("../../../../img/clip-icon_32.png") center no-repeat;
+  background-size: contain;
+}
+
+.overlapped {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}

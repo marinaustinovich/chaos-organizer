@@ -3,6 +3,8 @@ import ModalMedia from './ModalMedia/ModalMedia';
 import { startTimer, stopTimer } from '../../utils';
 import Post from './Post/Post';
 import Emoji from './Emoji/Emoji';
+import FileUploader from './FileUploader/FileUploader';
+import FilePreview from './FilePreview/FilePreview';
 
 import './chat.css';
 
@@ -23,6 +25,7 @@ export default class Chat {
     this.mediaType = null;
     this.mediaFile = null;
     this.emojisElement = null;
+    this.uploadElement = null;
   }
 
   init() {
@@ -63,12 +66,11 @@ export default class Chat {
             <div class="post-container">
               <textarea id="post-content" rows="2" placeholder="Type your message here" required></textarea>
               <div class="media-button-wrapper">
-                <button class="btn-media upload-button" type="button"></button>
                 <button class="btn-media audio-button" type="button"></button>
                 <button class="btn-media video-button" type="button"></button>
               </div>
               
-              <div class="media-action-wrapper">
+              <div class="media-action-wrapper hidden">
                 <button class="btn-media start-media" type="button"></button>
                 <div id="timer" class="timer">00:00</div>
                 <button class="btn-media stop-media" type="button"></button>
@@ -76,15 +78,20 @@ export default class Chat {
               
             </div>
           </form>
+          <div class="preview-list"></div>
         </section>
       </div>
     `;
 
+    this.textarea = this.container.querySelector('#post-content');
+    this.mediaButtonWrapper = document.querySelector('.media-button-wrapper');
+    this.mediaActionWrapper = document.querySelector('.media-action-wrapper');
     this.emojisElement = new Emoji(document.querySelector('.post-container'));
+    this.uploadElement = new FileUploader(this.mediaButtonWrapper, this.textarea);
     this.modalWindow = this.container.querySelector('.modal-window');
     this.messages = this.container.querySelector('.messages');
     this.messageForm = this.container.querySelector('.message-form');
-    this.textarea = this.container.querySelector('#post-content');
+
     this.startButton = this.container.querySelector('.start-media');
     this.stopButton = this.container.querySelector('.stop-media');
     this.audioButton = this.container.querySelector('.audio-button');
@@ -136,6 +143,10 @@ export default class Chat {
           this.mediaFile = null;
         }
 
+        if (this.uploadElement.getUploadedFile()) {
+          post.message.media = this.mediaFile;
+        }
+
         Chat.handleSendMessage(post);
       }
       this.textarea.value = '';
@@ -176,8 +187,8 @@ export default class Chat {
   }
 
   toggleMediaButtonVisibility() {
-    this.container.querySelector('.media-button-wrapper').style.display = 'none';
-    this.container.querySelector('.media-action-wrapper').style.display = 'flex';
+    this.mediaButtonWrapper.classList.toggle('hidden');
+    this.mediaActionWrapper.classList.toggle('hidden');
   }
 
   async setupMediaRecorder(constraints) {
@@ -202,6 +213,7 @@ export default class Chat {
     stopTimer('#timer');
     this.mediaType = constraints;
     this.mediaFile = Chat.createMediaFile(this.chunks, constraints);
+    this.preview = new FilePreview(this.mediaFile);
     this.chunks = [];
   }
 
@@ -233,15 +245,14 @@ export default class Chat {
     }
 
     this.startButton.disabled = true;
-    this.stopButton.disabled = false;
 
     this.recorder.start();
     startTimer('#timer');
   }
 
   stopRecording() {
+    this.toggleMediaButtonVisibility();
     this.startButton.disabled = false;
-    this.stopButton.disabled = true;
 
     if (this.recorder && this.recorder.state !== 'inactive') {
       this.recorder.stop();

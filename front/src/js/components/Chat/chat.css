@@ -81,11 +81,6 @@
   background-size: contain;
 }
 
-.upload-button {
-  background: url("../../../img/clip-icon_32.png") center no-repeat;
-  background-size: contain;
-}
-
 .more-button {
   background: url("../../../img/hamburger-button-icon_32.png") center no-repeat;
   background-size: contain;
@@ -154,12 +149,10 @@
 }
 
 .btn-media:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
-.media-button-wrapper {
-  display: flex;
-}
+
 
 button.audio-button {
   background: url("../../../img/audio-icon_32.png") center no-repeat;
@@ -171,9 +164,9 @@ button.video-button {
   background-size: contain;
 }
 
-/* for audio action */
-.media-action-wrapper {
-  display: none;
+/* for media action */
+.media-button-wrapper, .media-action-wrapper  {
+  display: flex;
 }
 
 button.start-media {
@@ -191,7 +184,6 @@ button.stop-media {
 }
 
 .btn-media:focus {
-  background-color: #d7ebfc;
   outline: none;
 }
 
@@ -243,4 +235,9 @@ button.stop-media {
 .btn-modal-wrapper {
   display: flex;
   justify-content: end;
+}
+
+.preview-list {
+  display: flex;
+  gap: 15px;
 }

@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../database');
+const sequelize = require('../database');
 
 const Message = sequelize.define('Message', {
   id: {
@@ -8,15 +8,15 @@ const Message = sequelize.define('Message', {
     primaryKey: true,
   },
   video: {
-    type: DataTypes.STRING, // URL or identifier of the video
+    type: DataTypes.STRING,
     allowNull: true,
   },
   audio: {
-    type: DataTypes.STRING, // URL or identifier of the audio
+    type: DataTypes.STRING,
     allowNull: true,
   },
   location: {
-    type: DataTypes.JSON, // GeoJSON object for location data
+    type: DataTypes.JSON, 
     allowNull: true,
   },
   file: {

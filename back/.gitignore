@@ -1,6 +1,7 @@
 .idea
 dist
 doc
+uploads
 
 # Logs
 logs

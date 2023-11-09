@@ -1,6 +1,5 @@
 import { messages } from '../../../constants';
-import createElement from '../../../utils/createDOM';
-import { isValidGeo } from '../../../utils/validation';
+import { createElement, isValidGeo } from '../../../utils';
 
 import './modal-geo.css';
 

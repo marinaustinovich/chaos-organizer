@@ -1,9 +1,11 @@
 import ModalGeo from './ModalGeo/ModalGeo';
-import ModalMedia from './media/ModalMedia';
-import { startTimer, stopTimer } from '../../utils/timer';
-import Post from './Post';
+import ModalMedia from './ModalMedia/ModalMedia';
+import { startTimer, stopTimer } from '../../utils';
+import Post from './Post/Post';
+import Emoji from './Emoji/Emoji';
 
 import './chat.css';
+
 // import mergeMessages from './mergeMessages';
 // import sortMessagesByDate from './sortMessagesByDate';
 
@@ -17,6 +19,10 @@ export default class Chat {
     this.socket = socket;
     this.user = user;
     this.posts = messages;
+    this.mediaChunks = [];
+    this.mediaType = null;
+    this.mediaFile = null;
+    this.emojisElement = null;
   }
 
   init() {
@@ -55,20 +61,6 @@ export default class Chat {
         <section id="create-post" class="create-post">
           <form name="post" id="post-form" class="message-form">
             <div class="post-container">
-              <div class="emoji-button-wrapper">
-                <button class="btn-media emoji-button" type="button"></button>
-                <div class="emoji-window hidden">
-                  <div class="emoji-picker">
-                    <button class="emoji" type="button">😀</button>
-                    <button class="emoji" type="button">😁</button>
-                    <button class="emoji" type="button">😂</button>
-                    <button class="emoji" type="button">🤣</button>
-                    <button class="emoji" type="button">😃</button>
-                    <button class="emoji" type="button">😄</button>
-                  </div>
-                </div>
-              </div>
-              
               <textarea id="post-content" rows="2" placeholder="Type your message here" required></textarea>
               <div class="media-button-wrapper">
                 <button class="btn-media upload-button" type="button"></button>
@@ -88,6 +80,7 @@ export default class Chat {
       </div>
     `;
 
+    this.emojisElement = new Emoji(document.querySelector('.post-container'));
     this.modalWindow = this.container.querySelector('.modal-window');
     this.messages = this.container.querySelector('.messages');
     this.messageForm = this.container.querySelector('.message-form');
@@ -96,9 +89,6 @@ export default class Chat {
     this.stopButton = this.container.querySelector('.stop-media');
     this.audioButton = this.container.querySelector('.audio-button');
     this.videoButton = this.container.querySelector('.video-button');
-    this.emojiButton = this.container.querySelector('.emoji-button');
-    this.emojiWindow = this.container.querySelector('.emoji-window');
-    this.emojiPicker = this.container.querySelector('.emoji-picker');
   }
 
   addEvents() {
@@ -109,8 +99,6 @@ export default class Chat {
     this.videoButton.addEventListener('click', () => this.writeMedia({ audio: true, video: true }));
     this.startButton.addEventListener('click', () => this.startRecording());
     this.stopButton.addEventListener('click', () => this.stopRecording());
-    this.emojiButton.addEventListener('click', () => this.toggleEmojiButton());
-    this.emojiPicker.addEventListener('click', (event) => this.addEmoji(event));
   }
 
   addSavedPosts() {
@@ -123,9 +111,7 @@ export default class Chat {
   }
 
   closeEmojiWindow() {
-    if (document.querySelector('.emoji-window').className === 'emoji-window') {
-      this.emojiWindow.classList.add('hidden');
-    }
+    this.emojisElement.closeEmojiWindow();
   }
 
   async addPost(e) {
@@ -133,7 +119,7 @@ export default class Chat {
       e.preventDefault();
       const geoData = await this.getGeoData();
       if (geoData) {
-        const request = {
+        const post = {
           type: 'post',
           user: {
             name: this.user.name,
@@ -145,7 +131,12 @@ export default class Chat {
           },
         };
 
-        Chat.handleSendMessage(request);
+        if (this.mediaFile) {
+          post.message.media = this.mediaFile;
+          this.mediaFile = null;
+        }
+
+        Chat.handleSendMessage(post);
       }
       this.textarea.value = '';
     }
@@ -209,8 +200,9 @@ export default class Chat {
 
   handleRecordingStop(constraints) {
     stopTimer('#timer');
-    console.log(constraints);
-    this.constraints = constraints;
+    this.mediaType = constraints;
+    this.mediaFile = Chat.createMediaFile(this.chunks, constraints);
+    this.chunks = [];
   }
 
   handleError() {
@@ -224,6 +216,15 @@ export default class Chat {
       : 'audio/ogg; codecs=opus';
     const blob = new Blob(chunks, { type: mediaType });
     return URL.createObjectURL(blob);
+  }
+
+  static createMediaFile(chunks, constraints) {
+    const mediaType = constraints.video
+      ? 'video/webm'
+      : 'audio/ogg; codecs=opus';
+    return new File(chunks, `media.${constraints.video ? 'webm' : 'ogg'}`, {
+      type: mediaType,
+    });
   }
 
   startRecording() {
@@ -243,50 +244,30 @@ export default class Chat {
     this.stopButton.disabled = true;
 
     if (this.recorder && this.recorder.state !== 'inactive') {
-      console.log('stop', this.recorder);
       this.recorder.stop();
     }
   }
 
-  toggleEmojiButton() {
-    this.emojiButton.classList.toggle('active');
-    this.emojiWindow.classList.toggle('hidden');
-  }
-
-  addEmoji(event) {
-    if (event.target.nodeName === 'BUTTON') {
-      const emoji = event.target.textContent;
-      this.textarea.value += emoji;
-    }
-  }
-
-  static async handleSendMessage(dataMessage) {
+  static async handleSendMessage(data) {
     const formData = new FormData();
-    formData.append('message', JSON.stringify(dataMessage));
-    if (this.mediaChunks && this.mediaType) {
-      let type;
-      if (this.mediaType.video) {
-        type = 'video';
-      } else {
-        type = 'audio';
-      }
-
-      const mediaFile = new File([this.chunks], 'media', {
-        type: this.mediaType.type,
-      });
-      formData.append(type, mediaFile);
-      this.chunks = [];
+    formData.append('message', JSON.stringify(data));
+    if (data.message.media) {
+      const mediaType = data.message.media.type.startsWith('video/')
+        ? 'video'
+        : 'audio';
+      formData.append(
+        mediaType,
+        data.message.media,
+        `media.${mediaType.split('/')[1]}`,
+      );
     }
 
-    console.log('formData', formData);
     const resultFetch = await fetch('http://localhost:7070/messages', {
       method: 'POST',
       body: formData,
     });
     console.log('resultFetch', resultFetch);
     if (resultFetch.ok) {
-      // const text = await resultFetch.text();
-      // console.log(text);
       const newMessage = await resultFetch.json();
       console.log('newMessage', newMessage);
       const post = new Post(newMessage);
@@ -294,7 +275,7 @@ export default class Chat {
     } else {
       console.error('Error:', resultFetch.status);
     }
-    const messageJson = JSON.stringify(dataMessage);
-    this.socket.send(messageJson);
+    // const messageJson = JSON.stringify(data);
+    // this.socket.send(messageJson);
   }
 }

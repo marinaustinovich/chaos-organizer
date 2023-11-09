@@ -11,7 +11,6 @@ body {
   padding: 25px;
 }
 
-
 .container {
   height: 93vh;
   min-width: 320px;
@@ -28,11 +27,11 @@ body {
   background-color: #3a6d99;
 }
 
-a{
-  color: #ffffff;
+a {
+  color: #4442d2;
 }
 
-.nav{
+.nav {
   justify-content: space-between;
 }
 
@@ -52,7 +51,7 @@ a{
   padding: 0.8rem 1rem;
 }
 
-.organizer{
+.organizer {
   width: 25%;
   box-sizing: border-box;
 }
@@ -61,12 +60,13 @@ a{
   width: 55%;
 }
 
-.search, .nested {
+.search,
+.nested {
   width: 5%;
 }
 
 a:hover {
-  color: #ffffff;
+  color: #1d1ba7;
 }
 
 .main {
@@ -76,7 +76,7 @@ a:hover {
   height: calc(100% - 50px);
 }
 
-.section{
+.section {
   width: 55%;
 }
 

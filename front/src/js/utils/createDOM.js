@@ -1,4 +1,4 @@
-const createElement = (
+export const createElement = (
   tag,
   {
     classes = [], attributes = {}, children = [], textContent = '',
@@ -7,9 +7,15 @@ const createElement = (
   const element = document.createElement(tag);
   element.classList.add(...classes);
   Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
-  if (textContent) element.textContent = textContent;
+  if (textContent) element.innerHTML = textContent;
   children.forEach((child) => element.appendChild(child));
   return element;
 };
 
-export default createElement;
+export const createLink = (inputText) => {
+  const replacePattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
+
+  const replacedText = inputText.replace(replacePattern, (match) => `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`);
+
+  return replacedText;
+};

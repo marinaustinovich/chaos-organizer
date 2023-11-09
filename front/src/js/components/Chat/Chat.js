@@ -4,6 +4,7 @@ import Emoji from './Emoji/Emoji';
 import FileUploader from './FileUploader/FileUploader';
 import Recorder from './Recorder/Recorder';
 import { appendFormData } from '../../utils';
+import { baseUrl } from '../../constants';
 
 import './chat.css';
 
@@ -182,7 +183,7 @@ export default class Chat {
       }
     });
 
-    const resultFetch = await fetch('http://localhost:7070/messages', {
+    const resultFetch = await fetch(`${baseUrl}messages`, {
       method: 'POST',
       body: formData,
     });

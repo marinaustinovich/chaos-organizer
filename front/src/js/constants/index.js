@@ -1,4 +1,9 @@
 import messages from './messages.json';
 import formId from './formId.json';
+import mediaTypes from './mediaTypes.json';
 
-export { messages, formId };
+const baseUrl = 'http://localhost:7070/';
+
+export {
+  messages, formId, mediaTypes, baseUrl,
+};

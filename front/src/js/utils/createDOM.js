@@ -20,3 +20,12 @@ export const createLink = (inputText) => {
 
   return replacedText;
 };
+
+export const getFileNameWithoutExtension = (filename) => {
+  const lastDotIndex = filename.lastIndexOf('.');
+  const lastSlashIndex = filename.lastIndexOf('/');
+  const start = lastSlashIndex > -1 ? lastSlashIndex + 1 : 0;
+  const end = lastDotIndex > -1 ? lastDotIndex : filename.length;
+
+  return filename.substring(start, end);
+};

@@ -26,12 +26,10 @@
   text-align: left;
 }
 
-.post-image {
-}
-
+.post-image,
 .post-pdf {
-  width: 100%;
-  height: auto;
+  width: 40%;
+  align-self: center;
 }
 
 .geodata {

@@ -1,9 +1,10 @@
-import { createElement, createLink } from './createDOM';
+import { createElement, createLink, getFileNameWithoutExtension } from './createDOM';
 import { stopTimer, resetTimer, startTimer } from './timer';
 import { isValidPassword, isValidGeo } from './validation';
 import appendFormData from './formData';
 
 export {
+  getFileNameWithoutExtension,
   createElement,
   createLink,
   stopTimer,

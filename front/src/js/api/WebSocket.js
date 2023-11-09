@@ -55,10 +55,6 @@ class WebSocketClient {
     }
   }
 
-  static handleOpen = () => {
-    console.log('Connected to WebSocket server');
-  };
-
   handleMessage = (event) => {
     try {
       const response = JSON.parse(event.data);

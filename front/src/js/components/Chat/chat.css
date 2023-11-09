@@ -152,6 +152,11 @@
   transform: scale(1.05);
 }
 
+.btn-media:focus {
+  outline: none;
+}
+
+/* 
 
 
 button.audio-button {
@@ -162,10 +167,10 @@ button.audio-button {
 button.video-button {
   background: url("../../../img/video-camera-icon_32.png") center no-repeat;
   background-size: contain;
-}
+} */
 
 /* for media action */
-.media-button-wrapper, .media-action-wrapper  {
+/* .media-button-wrapper, .media-action-wrapper  {
   display: flex;
 }
 
@@ -185,7 +190,7 @@ button.stop-media {
 
 .btn-media:focus {
   outline: none;
-}
+} */
 
 .modal-chat {
   display: block;

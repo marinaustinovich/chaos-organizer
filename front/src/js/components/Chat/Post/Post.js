@@ -12,7 +12,6 @@ export default class Post {
     this.userId = data.userId;
     this.post = null;
     this.posts = null;
-    this.textarea = null;
     this.createPost();
   }
 
@@ -47,10 +46,10 @@ export default class Post {
     });
 
     this.posts = document.getElementById('posts');
-    this.textarea = document.querySelector('textarea');
 
     this.posts.insertBefore(this.post, this.posts.firstChild);
-    this.textarea.value = '';
+    document.querySelector('textarea').value = '';
+    document.querySelector('.preview-list').innerHTML = '';
     Post.scrollToTop();
   }
 

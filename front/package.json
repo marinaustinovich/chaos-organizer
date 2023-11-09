@@ -49,6 +49,7 @@
   "dependencies": {
     "air-datepicker": "^3.3.5",
     "core-js": "^3.29.1",
-    "dayjs": "^1.11.7"
+    "dayjs": "^1.11.7",
+    "lodash": "^4.17.21"
   }
 }

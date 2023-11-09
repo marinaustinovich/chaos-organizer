@@ -1,10 +1,9 @@
 import ModalGeo from './ModalGeo/ModalGeo';
-import ModalMedia from './ModalMedia/ModalMedia';
-import { startTimer, stopTimer } from '../../utils';
 import Post from './Post/Post';
 import Emoji from './Emoji/Emoji';
 import FileUploader from './FileUploader/FileUploader';
-import FilePreview from './FilePreview/FilePreview';
+import Recorder from './Recorder/Recorder';
+import { appendFormData } from '../../utils';
 
 import './chat.css';
 
@@ -21,9 +20,10 @@ export default class Chat {
     this.socket = socket;
     this.user = user;
     this.posts = messages;
-    this.mediaChunks = [];
+    this.recorder = null;
     this.mediaType = null;
     this.mediaFile = null;
+    this.uploadedFile = null;
     this.emojisElement = null;
     this.uploadElement = null;
   }
@@ -65,17 +65,6 @@ export default class Chat {
           <form name="post" id="post-form" class="message-form">
             <div class="post-container">
               <textarea id="post-content" rows="2" placeholder="Type your message here" required></textarea>
-              <div class="media-button-wrapper">
-                <button class="btn-media audio-button" type="button"></button>
-                <button class="btn-media video-button" type="button"></button>
-              </div>
-              
-              <div class="media-action-wrapper hidden">
-                <button class="btn-media start-media" type="button"></button>
-                <div id="timer" class="timer">00:00</div>
-                <button class="btn-media stop-media" type="button"></button>
-              </div>
-              
             </div>
           </form>
           <div class="preview-list"></div>
@@ -84,28 +73,23 @@ export default class Chat {
     `;
 
     this.textarea = this.container.querySelector('#post-content');
-    this.mediaButtonWrapper = document.querySelector('.media-button-wrapper');
-    this.mediaActionWrapper = document.querySelector('.media-action-wrapper');
-    this.emojisElement = new Emoji(document.querySelector('.post-container'));
-    this.uploadElement = new FileUploader(this.mediaButtonWrapper, this.textarea);
+    this.postContainer = document.querySelector('.post-container');
     this.modalWindow = this.container.querySelector('.modal-window');
     this.messages = this.container.querySelector('.messages');
     this.messageForm = this.container.querySelector('.message-form');
-
-    this.startButton = this.container.querySelector('.start-media');
-    this.stopButton = this.container.querySelector('.stop-media');
-    this.audioButton = this.container.querySelector('.audio-button');
-    this.videoButton = this.container.querySelector('.video-button');
+    this.emojisElement = new Emoji(this.postContainer);
+    this.recorder = new Recorder(this.postContainer);
+    this.mediaButtonWrapper = document.querySelector('.media-button-wrapper');
+    this.uploadElement = new FileUploader(
+      this.mediaButtonWrapper,
+      this.textarea,
+    );
   }
 
   addEvents() {
     this.textarea.addEventListener('input', () => this.changeHeightTextarea());
     this.textarea.addEventListener('keydown', (e) => this.addPost(e));
     this.textarea.addEventListener('click', () => this.closeEmojiWindow());
-    this.audioButton.addEventListener('click', () => this.writeMedia({ audio: true, video: false }));
-    this.videoButton.addEventListener('click', () => this.writeMedia({ audio: true, video: true }));
-    this.startButton.addEventListener('click', () => this.startRecording());
-    this.stopButton.addEventListener('click', () => this.stopRecording());
   }
 
   addSavedPosts() {
@@ -138,13 +122,20 @@ export default class Chat {
           },
         };
 
+        this.mediaFile = this.recorder.getMediaFile();
         if (this.mediaFile) {
-          post.message.media = this.mediaFile;
+          const mediaType = this.mediaFile.type.startsWith('video/')
+            ? 'video'
+            : 'audio';
+          post[mediaType] = this.mediaFile;
           this.mediaFile = null;
         }
 
-        if (this.uploadElement.getUploadedFile()) {
-          post.message.media = this.mediaFile;
+        this.uploadedFile = this.uploadElement.getUploadedFile();
+
+        if (this.uploadedFile) {
+          post.file = this.uploadedFile;
+          this.uploadedFile = null;
         }
 
         Chat.handleSendMessage(post);
@@ -181,97 +172,13 @@ export default class Chat {
     return modalGeo.waitForOk();
   }
 
-  writeMedia(constraints) {
-    this.toggleMediaButtonVisibility();
-    this.setupMediaRecorder(constraints);
-  }
-
-  toggleMediaButtonVisibility() {
-    this.mediaButtonWrapper.classList.toggle('hidden');
-    this.mediaActionWrapper.classList.toggle('hidden');
-  }
-
-  async setupMediaRecorder(constraints) {
-    this.startButton.disabled = true;
-    this.chunks = [];
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      this.recorder = new MediaRecorder(stream);
-
-      this.recorder.addEventListener('start', () => console.log('start media'));
-      this.recorder.addEventListener('dataavailable', (event) => this.chunks.push(event.data));
-      this.recorder.addEventListener('stop', () => this.handleRecordingStop(constraints));
-
-      this.startButton.disabled = false;
-    } catch {
-      this.handleError();
-    }
-  }
-
-  handleRecordingStop(constraints) {
-    stopTimer('#timer');
-    this.mediaType = constraints;
-    this.mediaFile = Chat.createMediaFile(this.chunks, constraints);
-    this.preview = new FilePreview(this.mediaFile);
-    this.chunks = [];
-  }
-
-  handleError() {
-    this.startButton.disabled = false;
-    this.modalMedia = new ModalMedia(this.modalWindow);
-  }
-
-  static createMediaUrl(chunks, constraints) {
-    const mediaType = constraints.video
-      ? 'video/webm'
-      : 'audio/ogg; codecs=opus';
-    const blob = new Blob(chunks, { type: mediaType });
-    return URL.createObjectURL(blob);
-  }
-
-  static createMediaFile(chunks, constraints) {
-    const mediaType = constraints.video
-      ? 'video/webm'
-      : 'audio/ogg; codecs=opus';
-    return new File(chunks, `media.${constraints.video ? 'webm' : 'ogg'}`, {
-      type: mediaType,
-    });
-  }
-
-  startRecording() {
-    if (!this.recorder) {
-      return;
-    }
-
-    this.startButton.disabled = true;
-
-    this.recorder.start();
-    startTimer('#timer');
-  }
-
-  stopRecording() {
-    this.toggleMediaButtonVisibility();
-    this.startButton.disabled = false;
-
-    if (this.recorder && this.recorder.state !== 'inactive') {
-      this.recorder.stop();
-    }
-  }
-
   static async handleSendMessage(data) {
     const formData = new FormData();
-    formData.append('message', JSON.stringify(data));
-    if (data.message.media) {
-      const mediaType = data.message.media.type.startsWith('video/')
-        ? 'video'
-        : 'audio';
-      formData.append(
-        mediaType,
-        data.message.media,
-        `media.${mediaType.split('/')[1]}`,
-      );
-    }
+    Object.keys(data).forEach((key) => {
+      if (data[key] !== undefined) {
+        appendFormData(formData, key, data[key]);
+      }
+    });
 
     const resultFetch = await fetch('http://localhost:7070/messages', {
       method: 'POST',

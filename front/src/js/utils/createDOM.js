@@ -13,6 +13,7 @@ export const createElement = (
 };
 
 export const createLink = (inputText) => {
+  if (!inputText) return '';
   const replacePattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
 
   const replacedText = inputText.replace(replacePattern, (match) => `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`);

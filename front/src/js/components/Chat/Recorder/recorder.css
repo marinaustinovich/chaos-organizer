@@ -1,0 +1,28 @@
+.media-button-wrapper,
+.media-action-wrapper {
+  display: flex;
+}
+
+button.start-media {
+  background: url("../../../../img/start-icon_32.png") center no-repeat;
+  background-size: contain;
+}
+
+button.stop-media {
+  background: url("../../../../img/stop-icon_32.png") center no-repeat;
+  background-size: contain;
+}
+
+.timer {
+  font-size: 1.5rem;
+}
+
+.audio-button {
+  background: url("../../../../img/audio-icon_32.png") center no-repeat;
+  background-size: contain;
+}
+
+.video-button {
+  background: url("../../../../img/video-camera-icon_32.png") center no-repeat;
+  background-size: contain;
+}

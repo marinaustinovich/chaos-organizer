@@ -1,5 +1,5 @@
 import WebSocketClient from '../../api/WebSocket';
-import { isValidPassword } from '../../utils/validation';
+import { isValidPassword } from '../../utils';
 import UIModal from './UIModal';
 import { messages, formId } from '../../constants';
 

@@ -1,0 +1,52 @@
+.emoji-button-wrapper {
+  position: relative;
+}
+
+.emoji-button {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  background: url("../../../../img/normal-smile-icon.png") center no-repeat;
+  background-size: contain;
+  margin-left: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.emoji-button.active {
+  background-image: url("../../../../img/active-smile-icon.png") center
+    no-repeat;
+}
+
+.emoji-window {
+  position: absolute;
+  top: 100%;
+  width: 260px;
+  min-height: 100px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  overflow-y: auto;
+  white-space: nowrap;
+  padding: 5px;
+}
+
+.emoji-picker {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.emoji-picker button {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.emoji-picker button:hover {
+  transform: scale(1.2);
+}

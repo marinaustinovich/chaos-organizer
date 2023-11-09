@@ -1,4 +1,4 @@
-import { startTimer, stopTimer, resetTimer } from '../utils/timer';
+import { startTimer, stopTimer, resetTimer } from '../utils';
 
 const mockElement = {
   textContent: '',

@@ -1,6 +1,7 @@
 import { mediaTypes, messages } from '../../../constants';
 import { createElement } from '../../../utils';
 import FilePreview from '../FilePreview/FilePreview';
+import ModalNotification from '../ModalNotification/ModalNotification';
 
 import './file-uploader.css';
 
@@ -61,7 +62,7 @@ export default class FileUploader {
     if (!file) return;
 
     if (file.size > mediaTypes.MAX_FILE_SIZE) {
-      alert(messages.ERROR_MAX_FILE_SIZE_LIMIT);
+      this.modal = new ModalNotification(messages.ERROR_MAX_FILE_SIZE_LIMIT);
       return;
     }
 
@@ -77,7 +78,7 @@ export default class FileUploader {
     if (!file) return;
 
     if (file.size > mediaTypes.MAX_FILE_SIZE) {
-      alert(messages.ERROR_MAX_FILE_SIZE_LIMIT);
+      this.modal = new ModalNotification(messages.ERROR_MAX_FILE_SIZE_LIMIT);
       return;
     }
 

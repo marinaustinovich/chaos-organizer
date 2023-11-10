@@ -1,6 +1,6 @@
 import { createElement, createLink, getFileNameWithoutExtension } from './createDOM';
 import { stopTimer, resetTimer, startTimer } from './timer';
-import { isValidPassword, isValidGeo } from './validation';
+import { isValidPassword, isValidGeo, isValidTimeFormat } from './validation';
 import appendFormData from './formData';
 
 export {
@@ -13,4 +13,5 @@ export {
   isValidPassword,
   isValidGeo,
   appendFormData,
+  isValidTimeFormat,
 };

@@ -3,8 +3,10 @@ import Post from './Post/Post';
 import UserInfo from './UserInfo/UserInfo';
 import Actions from './Actions/Actions';
 import { appendFormData, createElement } from '../../utils';
-import { baseUrl } from '../../constants';
-import { Emoji, FileUploader, Recorder } from '../commons';
+import { baseUrl, messages } from '../../constants';
+import {
+  Emoji, FileUploader, Recorder, ModalNotification,
+} from '../commons';
 
 import './chat.css';
 
@@ -33,25 +35,38 @@ export default class Chat {
     this.userInfoElement = null;
     this.postContainer = null;
     this.modalWindow = null;
+    this.modalNotification = null;
   }
 
   init() {
     this.drawUi();
+    this.initNotification();
     this.addEvents();
     this.addSavedPosts();
+  }
+
+  initNotification() {
+    if (Notification.permission === 'denied') {
+      this.showEnableNotificationsMessage();
+    } else if (Notification.permission !== 'granted') {
+      this.requestNotificationPermission();
+    }
   }
 
   drawUi() {
     this.modalWindow = createElement('div', { classes: ['modal-window'] });
     const chatWindow = createElement('div', { classes: ['chat-window'] });
     this.chatHeader = createElement('section', { classes: ['chat-header'] });
-    const messagesSection = createElement('section', { classes: ['messages'], attributes: { id: 'posts' } });
+    const messagesSection = createElement('section', {
+      classes: ['messages'],
+      attributes: { id: 'posts' },
+    });
     const createPostSection = this.createPostSection();
 
     chatWindow.append(this.chatHeader, messagesSection, createPostSection);
     this.container.append(this.modalWindow, chatWindow);
     this.userInfoElement = new UserInfo(this.chatHeader, this.user);
-    this.actionsContainer = new Actions(this.chatHeader);
+    this.actionsContainer = new Actions(this.chatHeader, this.user);
     this.emojisElement = new Emoji(createPostSection);
     this.recorder = new Recorder(createPostSection);
     this.uploadElement = new FileUploader(
@@ -99,6 +114,18 @@ export default class Chat {
 
   addSavedPosts() {
     this.posts.forEach((post) => new Post(post));
+  }
+
+  requestNotificationPermission() {
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        this.modalNotification = new ModalNotification(messages.NOTIFICATION_REMINDER);
+      }
+    });
+  }
+
+  showEnableNotificationsMessage() {
+    this.modalNotification = new ModalNotification(messages.ERROR_REMINDER_PERMISSION);
   }
 
   addNewPost(newMessage) {

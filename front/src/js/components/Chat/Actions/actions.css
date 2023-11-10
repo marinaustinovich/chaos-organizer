@@ -9,3 +9,9 @@
     no-repeat;
   background-size: contain;
 }
+
+.reminder-button {
+  background: url("../../../../img/notification-button-icon.png") center
+  no-repeat;
+background-size: contain;
+}

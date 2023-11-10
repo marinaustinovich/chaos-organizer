@@ -131,6 +131,7 @@
 .modal-chat label {
   display: block;
   text-align: left;
+  font-weight: 600;
 }
 
 .close {

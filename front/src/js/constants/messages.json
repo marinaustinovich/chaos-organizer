@@ -9,10 +9,17 @@
   "ERROR_GOING_WRONG": "Something went wrong",
   "ERROR_NO_COORDS": "Unfortunately, we were unable to determine your location, please give permission to use geolocation, or enter the coordinates manually",
   "ERROR_MEDIA_PERMISSION": "Please give permission to use audio or video, or use a different browser",
+  "ERROR_REMINDER_PERMISSION": "Notifications are blocked. If you would like to receive notifications, please enable them in your browser settings.",
   "ERROR_MAX_FILE_SIZE_LIMIT": "File size exceeds the limit of 20MB.",
+  "ERROR_EMPTY_INPUT": "All fields must be completed",
+  "LABEL_REMINDER": "Reminder",
+  "LABEL_TEXT": "Text of reminder",
+  "LABEL_TIME": "Time of reminder",
   "LABEL_COORDS": "Latitude and longitude separated by commas",
   "LABEL_MEDIA": "To change the permission settings for this site, follow these steps: Open the site's page. Find the 'lock' icon to the left of the browser's address bar. Click on the 'lock' icon and select 'Site Settings' or 'Permissions' (depending on your browser). Locate the microphone/camera setting and change it to 'Allow'. Close the settings and refresh the page. The site should now have access to your microphone/camera.",
   "PLACEHOLDER_COORDS": "51.50851, -0.12572",
+  "PLACEHOLDER_TIME": "MM.DD.YYYY 00:00",
+  "PLACEHOLDER_TEXT": "Please enter something",
   "BUTTON_CLOSE": "CLOSE",
   "BUTTON_OK": "OK",
   "DROPDOWN_ITEMS": [
@@ -23,5 +30,6 @@
     "Images",
     "Documents"
   ],
-  "NOTIFICATION_MAX_MEDIA_SIZE_LIMIT": "Recording stopped: file size exceeds the limit of 20MB."
+  "NOTIFICATION_MAX_MEDIA_SIZE_LIMIT": "Recording stopped: file size exceeds the limit of 20MB.",
+  "NOTIFICATION_REMINDER": "Permission for notifications has been granted. To revoke this permission, change the notification settings for this site"
 }

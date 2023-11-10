@@ -1,0 +1,20 @@
+.text-input,
+.time-input {
+  border: 1px solid black;
+  padding: 0.5rem;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.add-reminder,
+.close-reminder {
+  border: 1px solid black;
+  padding: 0.5rem;
+  border-radius: 7px;
+  margin: 5px;
+}
+
+.add-reminder:hover,
+.close-reminder:hover {
+  transform: scale(1.1);
+}

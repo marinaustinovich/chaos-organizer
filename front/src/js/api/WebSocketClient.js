@@ -1,4 +1,5 @@
 import Chat from '../components/Chat/Chat';
+import { ModalNotification } from '../components/commons';
 
 class WebSocketClient {
   constructor() {
@@ -8,6 +9,7 @@ class WebSocketClient {
       signin_response: this.handleSigninResponse,
       login_response: this.handleLoginResponse,
       new_message: this.handleNewMessage,
+      reminder: this.handleReminder,
     };
   }
 
@@ -110,6 +112,14 @@ class WebSocketClient {
       const newMessage = response.data;
       if (this.chat) {
         this.chat.addNewPost(newMessage);
+      }
+    }
+  }
+
+  handleReminder(response) {
+    if (response && response.message) {
+      if (Notification.permission === 'granted') {
+        this.reminder = new ModalNotification(response.message);
       }
     }
   }

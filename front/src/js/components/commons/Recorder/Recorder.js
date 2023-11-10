@@ -2,6 +2,7 @@ import { createElement, startTimer, stopTimer } from '../../../utils';
 import FilePreview from '../FilePreview/FilePreview';
 import ModalMedia from '../../Chat/ModalMedia/ModalMedia';
 import { mediaTypes, messages } from '../../../constants';
+import ModalNotification from '../ModalNotification/ModalNotification';
 
 import './recorder.css';
 
@@ -128,7 +129,7 @@ export default class Recorder {
       this.recorder.addEventListener('dataavailable', (event) => {
         if (this.currentFileSize + event.data.size > mediaTypes.MAX_FILE_SIZE) {
           this.recorder.stop();
-          alert(messages.NOTIFICATION_MAX_MEDIA_SIZE_LIMIT);
+          this.modal = new ModalNotification(messages.NOTIFICATION_MAX_MEDIA_SIZE_LIMIT);
           this.isRecordingStoppedDueToSize = true;
         } else {
           this.chunks.push(event.data);

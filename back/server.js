@@ -8,18 +8,29 @@ const path = require("path");
 const Router = require("koa-router");
 const WebSocket = require("ws");
 const sequelize = require("./database.js");
+const Reminder = require("./models/reminder");
+const Messages = require("./models/message");
 const User = require("./models/user");
 const addUser = require("./actions/addUser");
 const addMessage = require("./actions/addMessage");
 const findUserMessages = require("./actions/findUserMessages");
 const moveFile = require("./actions/moveFile");
+const {setReminders, activateReminder} = require("./actions/setReminders");
+const {
+  audioExtensions,
+  videoExtensions,
+  reminders,
+  users,
+} = require("./constants");
 const router = new Router();
 const server = new WebSocket.Server({ port: 7000 });
 const app = new Koa();
 
 const start = async () => {
   try {
-    await sequelize.sync();
+    await sequelize.sync({ force: true });
+    await User.bulkCreate(users);
+    await Reminder.bulkCreate(reminders);
 
     app.use(cors());
     app.use(koaBody({ multipart: true }));
@@ -31,14 +42,6 @@ const start = async () => {
       ctx.body = "Welcome to server!";
     });
 
-    const audioExtensions = [
-      "mp3", "wav", "ogg", "flac", "aac", "m4a", "aiff", "au", "wma", "alac", "amr"
-    ];
-    
-    const videoExtensions = [
-      "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "m4v", "mpg", "mpeg", "3gp", "f4v", "m2ts", "m4p", "mj2", "mts", "ogv", "qt", "vob"
-    ];
-    
     router.post("/messages", async (ctx) => {
       try {
         const { user, message } = ctx.request.body;
@@ -50,14 +53,17 @@ const start = async () => {
 
         try {
           if (files.file) {
-            const fileExtension = files.file.originalFilename.split('.').pop().toLowerCase();
+            const fileExtension = files.file.originalFilename
+              .split(".")
+              .pop()
+              .toLowerCase();
 
             if (audioExtensions.includes(fileExtension)) {
-              filePaths.audio = await moveFile(files.file, 'audio');
+              filePaths.audio = await moveFile(files.file, "audio");
             } else if (videoExtensions.includes(fileExtension)) {
-              filePaths.video = await moveFile(files.file, 'video');
+              filePaths.video = await moveFile(files.file, "video");
             } else {
-              filePaths.file = await moveFile(files.file, 'files');
+              filePaths.file = await moveFile(files.file, "files");
             }
           }
 
@@ -82,16 +88,50 @@ const start = async () => {
 
         server.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({
-              type: 'new_message',
-              data: newMessage,
-            }));
+            client.send(
+              JSON.stringify({
+                type: "new_message",
+                data: newMessage,
+              })
+            );
           }
         });
       } catch (error) {
         console.error(error);
         ctx.status = 500;
-        ctx.body = { error: "При сохранении сообщения произошла ошибка" };
+        ctx.body = { error: "Failed to add message" };
+      }
+    });
+
+    router.post("/addReminder", async (ctx) => {
+      try {
+        const { time, message, userId } = ctx.request.body;
+        console.log(time);
+
+        const newReminder = await Reminder.create({
+          userId,
+          time,
+          message,
+        });
+
+        const savedReminder = await Reminder.findOne({
+          where: { id: newReminder.id, userId },
+        });
+
+        if (savedReminder) {
+          activateReminder(server, savedReminder);
+        } else {
+          console.log(
+            `Reminder with id ${newReminder.id} and userId ${userId} not found.`
+          );
+        }
+
+        ctx.status = 200;
+        ctx.body = { success: true, message: "Reminder added successfully" };
+      } catch (error) {
+        console.error(error);
+        ctx.status = 500;
+        ctx.body = { success: false, error: "Failed to add reminder" };
       }
     });
 
@@ -145,6 +185,8 @@ const start = async () => {
                 messages: userMessages,
               },
             };
+
+            setReminders(server, data.id);
           } else {
             response = {
               type: "login_response",

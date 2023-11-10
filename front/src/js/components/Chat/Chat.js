@@ -2,7 +2,7 @@ import ModalGeo from './ModalGeo/ModalGeo';
 import Post from './Post/Post';
 import UserInfo from './UserInfo/UserInfo';
 import Actions from './Actions/Actions';
-import { appendFormData } from '../../utils';
+import { appendFormData, createElement } from '../../utils';
 import { baseUrl } from '../../constants';
 import { Emoji, FileUploader, Recorder } from '../commons';
 
@@ -28,8 +28,10 @@ export default class Chat {
     this.emojisElement = null;
     this.uploadElement = null;
     this.actionsContainer = null;
-    this.header = null;
+    this.chatHeader = null;
     this.userInfoElement = null;
+    this.postContainer = null;
+    this.modalWindow = null;
   }
 
   init() {
@@ -39,41 +41,54 @@ export default class Chat {
   }
 
   drawUi() {
-    this.container.innerHTML = `
-      <div class="modal-window"></div>
-      <div class="chat-window">
-        <section class="chat-header">
-         
-    
-        </section>
-        <section id="posts" class="messages"></section>
-        <section id="create-post" class="create-post">
-          <form name="post" id="post-form" class="message-form">
-            <div class="post-container">
-              <textarea id="post-content" rows="2" placeholder="Type your message here" required></textarea>
-            </div>
-          </form>
-          <div class="preview-list"></div>
-        </section>
-      </div>
-    `;
+    this.modalWindow = createElement('div', { classes: ['modal-window'] });
+    const chatWindow = createElement('div', { classes: ['chat-window'] });
 
-    this.textarea = this.container.querySelector('#post-content');
-    this.postContainer = document.querySelector('.post-container');
-    this.modalWindow = this.container.querySelector('.modal-window');
-    this.messages = this.container.querySelector('.messages');
-    this.messageForm = this.container.querySelector('.message-form');
-    this.messages = this.container.querySelector('.messages');
-    this.header = this.container.querySelector('.chat-header');
-    this.userInfoElement = new UserInfo(this.header, this.user);
-    this.actionsContainer = new Actions(this.header);
-    this.emojisElement = new Emoji(this.postContainer);
-    this.recorder = new Recorder(this.postContainer);
-    this.mediaButtonWrapper = document.querySelector('.media-button-wrapper');
+    this.chatHeader = createElement('section', { classes: ['chat-header'] });
+    const messagesSection = createElement('section', { classes: ['messages'], attributes: { id: 'posts' } });
+    const createPostSection = this.createPostSection();
+
+    chatWindow.append(this.chatHeader, messagesSection, createPostSection);
+    this.container.append(this.modalWindow, chatWindow);
+    this.userInfoElement = new UserInfo(this.chatHeader, this.user);
+    this.actionsContainer = new Actions(this.chatHeader);
+    this.emojisElement = new Emoji(createPostSection);
+    this.recorder = new Recorder(createPostSection);
     this.uploadElement = new FileUploader(
-      this.mediaButtonWrapper,
+      createPostSection.querySelector('.media-button-wrapper'),
       this.textarea,
     );
+  }
+
+  createPostSection() {
+    this.textarea = createElement('textarea', {
+      attributes: {
+        id: 'post-content',
+        rows: '2',
+        placeholder: 'Type your message here',
+        required: true,
+      },
+    });
+
+    const form = createElement('form', {
+      classes: ['message-form'],
+      attributes: { name: 'post', id: 'post-form' },
+      children: [this.textarea],
+    });
+
+    const previewList = createElement('div', { classes: ['preview-list'] });
+    this.postContainer = createElement('div', {
+      classes: ['post-container'],
+      children: [form, previewList],
+    });
+
+    const createPostSection = createElement('section', {
+      classes: ['create-post'],
+      attributes: { id: 'create-post' },
+      children: [this.postContainer],
+    });
+
+    return createPostSection;
   }
 
   addEvents() {

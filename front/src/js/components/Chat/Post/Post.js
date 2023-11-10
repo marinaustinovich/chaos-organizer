@@ -53,24 +53,36 @@ export default class Post {
 
   createFileElement() {
     const fileFragment = document.createDocumentFragment();
-
     if (this.data.file) {
       const fileExtension = this.data.file.split('.').pop().toLowerCase();
+      const fileUrl = `${baseUrl}${this.data.file}`;
+
+      const downloadLink = createElement('a', {
+        attributes: { href: fileUrl, download: getFileNameWithoutExtension(this.data.file) },
+      });
+
+      downloadLink.addEventListener('click', (event) => {
+        if (event.button === 0) {
+          event.preventDefault();
+          window.open(fileUrl, '_blank');
+        }
+      });
 
       if (imageExtensions.includes(fileExtension)) {
         const image = createElement('img', {
           classes: ['post-image'],
-          attributes: { src: `${baseUrl}${this.data.file}`, alt: getFileNameWithoutExtension(this.data.file) },
+          attributes: { src: fileUrl, alt: getFileNameWithoutExtension(this.data.file) },
         });
-        fileFragment.appendChild(image);
-      }
-      if (fileExtension === mediaTypes.PDF) {
+        downloadLink.appendChild(image);
+      } else if (fileExtension === mediaTypes.PDF) {
         const pdf = createElement('embed', {
           classes: ['post-pdf'],
-          attributes: { src: `${baseUrl}${this.data.file}`, type: 'application/pdf' },
+          attributes: { src: fileUrl, type: 'application/pdf' },
         });
-        fileFragment.appendChild(pdf);
+        downloadLink.appendChild(pdf);
       }
+
+      fileFragment.appendChild(downloadLink);
     }
 
     return fileFragment;

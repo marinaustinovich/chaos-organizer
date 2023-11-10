@@ -2,5 +2,5 @@
     "VIDEO": "video",
     "AUDIO": "audio",
     "PDF": "pdf",
-    "MAX_FILE_SIZE": 10485760
+    "MAX_FILE_SIZE": 20971520
   }

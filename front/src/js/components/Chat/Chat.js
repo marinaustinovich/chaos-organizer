@@ -1,5 +1,6 @@
 import ModalGeo from './ModalGeo/ModalGeo';
 import Post from './Post/Post';
+import UserInfo from './UserInfo/UserInfo';
 import Actions from './Actions/Actions';
 import { appendFormData } from '../../utils';
 import { baseUrl } from '../../constants';
@@ -28,6 +29,7 @@ export default class Chat {
     this.uploadElement = null;
     this.actionsContainer = null;
     this.header = null;
+    this.userInfoElement = null;
   }
 
   init() {
@@ -41,12 +43,7 @@ export default class Chat {
       <div class="modal-window"></div>
       <div class="chat-window">
         <section class="chat-header">
-          <div class="user-info">
-            <div class="user-avatar">
-              <img src="${this.user.avatarURL}" alt="User Avatar">
-            </div>
-            <div class="user-name">${this.user.name}</div>
-          </div>
+         
     
         </section>
         <section id="posts" class="messages"></section>
@@ -68,6 +65,7 @@ export default class Chat {
     this.messageForm = this.container.querySelector('.message-form');
     this.messages = this.container.querySelector('.messages');
     this.header = this.container.querySelector('.chat-header');
+    this.userInfoElement = new UserInfo(this.header, this.user);
     this.actionsContainer = new Actions(this.header);
     this.emojisElement = new Emoji(this.postContainer);
     this.recorder = new Recorder(this.postContainer);

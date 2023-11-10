@@ -1,3 +1,4 @@
+import { mediaTypes, messages } from '../../../constants';
 import { createElement } from '../../../utils';
 import FilePreview from '../FilePreview/FilePreview';
 
@@ -59,8 +60,13 @@ export default class FileUploader {
     const file = this.fileInput.files && this.fileInput.files[0];
     if (!file) return;
 
+    if (file.size > mediaTypes.MAX_FILE_SIZE) {
+      alert(messages.ERROR_MAX_FILE_SIZE_LIMIT);
+      return;
+    }
+
     this.uploadedFile = file;
-    this.preview = new FilePreview(this.uploadedFile);
+    this.preview = new FilePreview(this.uploadedFile, () => this.reset());
     this.fileInput.value = null;
   }
 
@@ -68,8 +74,15 @@ export default class FileUploader {
     e.preventDefault();
 
     const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!file) return;
+
+    if (file.size > mediaTypes.MAX_FILE_SIZE) {
+      alert(messages.ERROR_MAX_FILE_SIZE_LIMIT);
+      return;
+    }
+
     this.uploadedFile = file;
-    this.preview = new FilePreview(this.uploadedFile);
+    this.preview = new FilePreview(this.uploadedFile, () => this.reset());
   }
 
   getUploadedFile() {

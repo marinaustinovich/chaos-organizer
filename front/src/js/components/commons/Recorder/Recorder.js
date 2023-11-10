@@ -1,11 +1,14 @@
 import { createElement, startTimer, stopTimer } from '../../../utils';
 import FilePreview from '../FilePreview/FilePreview';
 import ModalMedia from '../../Chat/ModalMedia/ModalMedia';
+import { mediaTypes, messages } from '../../../constants';
 
 import './recorder.css';
 
 export default class Recorder {
   constructor(container) {
+    this.currentFileSize = 0;
+    this.isRecordingStoppedDueToSize = false;
     this.container = container;
     this.recorder = null;
     this.chunks = [];
@@ -113,6 +116,7 @@ export default class Recorder {
   }
 
   async setupMediaRecorder(constraints) {
+    this.isRecordingStoppedDueToSize = false;
     this.startButton.disabled = true;
     this.chunks = [];
 
@@ -120,8 +124,18 @@ export default class Recorder {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       this.recorder = new MediaRecorder(stream);
 
-      this.recorder.addEventListener('start', () => console.log('start media'));
-      this.recorder.addEventListener('dataavailable', (event) => this.chunks.push(event.data));
+      this.recorder.addEventListener('start', () => { this.currentFileSize = 0; });
+      this.recorder.addEventListener('dataavailable', (event) => {
+        if (this.currentFileSize + event.data.size > mediaTypes.MAX_FILE_SIZE) {
+          this.recorder.stop();
+          alert(messages.NOTIFICATION_MAX_MEDIA_SIZE_LIMIT);
+          this.isRecordingStoppedDueToSize = true;
+        } else {
+          this.chunks.push(event.data);
+          this.currentFileSize += event.data.size;
+        }
+      });
+
       this.recorder.addEventListener('stop', () => this.handleRecordingStop(constraints));
 
       this.startButton.disabled = false;
@@ -132,10 +146,16 @@ export default class Recorder {
 
   handleRecordingStop(constraints) {
     stopTimer('#timer');
-    this.mediaType = constraints;
-    this.mediaFile = Recorder.createMediaFile(this.chunks, constraints);
-    this.preview = new FilePreview(this.mediaFile);
+
+    if (!this.isRecordingStoppedDueToSize) {
+      this.mediaType = constraints;
+      this.mediaFile = Recorder.createMediaFile(this.chunks, constraints);
+      this.preview = new FilePreview(this.mediaFile, () => this.reset());
+    }
+
+    this.isRecordingStoppedDueToSize = false;
     this.chunks = [];
+    this.currentFileSize = 0;
   }
 
   handleError() {

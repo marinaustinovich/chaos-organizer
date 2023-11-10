@@ -1,5 +1,6 @@
  {
     "VIDEO": "video",
     "AUDIO": "audio",
-    "PDF": "pdf"
+    "PDF": "pdf",
+    "MAX_FILE_SIZE": 10485760
   }

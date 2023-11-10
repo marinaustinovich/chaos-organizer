@@ -3,10 +3,11 @@ import { createElement } from '../../../utils';
 import './file-preview.css';
 
 export default class FilePreview {
-  constructor(file) {
+  constructor(file, onCloseCallback) {
     this.file = file;
+    this.onCloseCallback = onCloseCallback;
     this.closeButton = null;
-    this.preElement = null;
+    this.previewElement = null;
 
     this.init();
   }
@@ -30,13 +31,13 @@ export default class FilePreview {
       textContent: this.file.name,
     });
 
-    this.preElement = createElement('div', {
+    this.previewElement = createElement('div', {
       classes: ['file-preview'],
       children: [this.nameElement, this.closeButton],
     });
 
     this.container = document.querySelector('.preview-list');
-    this.container.append(this.preElement);
+    this.container.append(this.previewElement);
   }
 
   events() {
@@ -44,6 +45,9 @@ export default class FilePreview {
   }
 
   closePreview() {
-    this.container.removeChild(this.preElement);
+    if (this.onCloseCallback) {
+      this.onCloseCallback();
+    }
+    this.container.removeChild(this.previewElement);
   }
 }

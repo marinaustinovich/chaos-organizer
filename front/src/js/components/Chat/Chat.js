@@ -43,7 +43,6 @@ export default class Chat {
   drawUi() {
     this.modalWindow = createElement('div', { classes: ['modal-window'] });
     const chatWindow = createElement('div', { classes: ['chat-window'] });
-
     this.chatHeader = createElement('section', { classes: ['chat-header'] });
     const messagesSection = createElement('section', { classes: ['messages'], attributes: { id: 'posts' } });
     const createPostSection = this.createPostSection();

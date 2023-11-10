@@ -1,6 +1,7 @@
 .media-button-wrapper,
 .media-action-wrapper {
   display: flex;
+  align-items: center;
 }
 
 button.start-media {

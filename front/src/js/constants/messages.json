@@ -13,5 +13,13 @@
   "LABEL_MEDIA": "To change the permission settings for this site, follow these steps: Open the site's page. Find the 'lock' icon to the left of the browser's address bar. Click on the 'lock' icon and select 'Site Settings' or 'Permissions' (depending on your browser). Locate the microphone/camera setting and change it to 'Allow'. Close the settings and refresh the page. The site should now have access to your microphone/camera.",
   "PLACEHOLDER_COORDS": "51.50851, -0.12572",
   "BUTTON_CLOSE": "CLOSE",
-  "BUTTON_OK": "OK"
+  "BUTTON_OK": "OK",
+  "DROPDOWN_ITEMS": [
+    "Clear Chat",
+    "Uploaded Files",
+    "Videos",
+    "Audios",
+    "Images",
+    "Documents"
+  ]
 }

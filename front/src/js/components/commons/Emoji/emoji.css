@@ -1,5 +1,7 @@
 .emoji-button-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .emoji-button {
@@ -8,7 +10,6 @@
   background-color: transparent;
   background: url("../../../../img/normal-smile-icon.png") center no-repeat;
   background-size: contain;
-  margin-left: 10px;
   position: relative;
   cursor: pointer;
 }

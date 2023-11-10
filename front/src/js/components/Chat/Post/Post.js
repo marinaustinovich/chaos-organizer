@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import { createElement, createLink, getFileNameWithoutExtension } from '../../../utils';
-
-import './post.css';
 import imageExtensions from './image-extensions';
 import { baseUrl, mediaTypes } from '../../../constants';
+
+import './post.css';
 
 export default class Post {
   constructor(data) {

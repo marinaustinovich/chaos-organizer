@@ -1,6 +1,6 @@
 import { createElement, startTimer, stopTimer } from '../../../utils';
 import FilePreview from '../FilePreview/FilePreview';
-import ModalMedia from '../ModalMedia/ModalMedia';
+import ModalMedia from '../../Chat/ModalMedia/ModalMedia';
 
 import './recorder.css';
 

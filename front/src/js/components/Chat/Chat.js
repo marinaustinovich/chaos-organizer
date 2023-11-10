@@ -1,10 +1,9 @@
 import ModalGeo from './ModalGeo/ModalGeo';
 import Post from './Post/Post';
-import Emoji from './Emoji/Emoji';
-import FileUploader from './FileUploader/FileUploader';
-import Recorder from './Recorder/Recorder';
+import Actions from './Actions/Actions';
 import { appendFormData } from '../../utils';
 import { baseUrl } from '../../constants';
+import { Emoji, FileUploader, Recorder } from '../commons';
 
 import './chat.css';
 
@@ -12,7 +11,7 @@ import './chat.css';
 // import sortMessagesByDate from './sortMessagesByDate';
 
 export default class Chat {
-  constructor(container, socket, user, messages = []) {
+  constructor(container, socket, user, posts = []) {
     if (!(container instanceof HTMLElement)) {
       throw new Error('container is not HTMLElement');
     }
@@ -20,13 +19,15 @@ export default class Chat {
     this.container = container;
     this.socket = socket;
     this.user = user;
-    this.posts = messages;
+    this.posts = posts;
     this.recorder = null;
     this.mediaType = null;
     this.mediaFile = null;
     this.uploadedFile = null;
     this.emojisElement = null;
     this.uploadElement = null;
+    this.actionsContainer = null;
+    this.header = null;
   }
 
   init() {
@@ -46,20 +47,7 @@ export default class Chat {
             </div>
             <div class="user-name">${this.user.name}</div>
           </div>
-          <div class="actions">
-            <button class="btn-action search-button" type="button"></button>
-            <div class="dropdown">
-              <button class="btn-action more-button" type="button"></button>
-              <div class="dropdown-content">
-                <button class="dropdown-item">Clear Chat</button>
-                <button class="dropdown-item">Uploaded Files</button>
-                <button class="dropdown-item">Videos</button>
-                <button class="dropdown-item">Audios</button>
-                <button class="dropdown-item">Images</button>
-                <button class="dropdown-item">Documents</button>
-              </div>
-            </div>
-          </div>
+    
         </section>
         <section id="posts" class="messages"></section>
         <section id="create-post" class="create-post">
@@ -78,6 +66,9 @@ export default class Chat {
     this.modalWindow = this.container.querySelector('.modal-window');
     this.messages = this.container.querySelector('.messages');
     this.messageForm = this.container.querySelector('.message-form');
+    this.messages = this.container.querySelector('.messages');
+    this.header = this.container.querySelector('.chat-header');
+    this.actionsContainer = new Actions(this.header);
     this.emojisElement = new Emoji(this.postContainer);
     this.recorder = new Recorder(this.postContainer);
     this.mediaButtonWrapper = document.querySelector('.media-button-wrapper');

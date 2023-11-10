@@ -1,0 +1,11 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-button {
+  background: url("../../../../img/magnifying-glass-icon_32.png") center
+    no-repeat;
+  background-size: contain;
+}

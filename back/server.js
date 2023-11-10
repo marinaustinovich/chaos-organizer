@@ -79,6 +79,15 @@ const start = async () => {
           ...filePaths,
         });
         ctx.body = newMessage;
+
+        server.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: 'new_message',
+              data: newMessage,
+            }));
+          }
+        });
       } catch (error) {
         console.error(error);
         ctx.status = 500;

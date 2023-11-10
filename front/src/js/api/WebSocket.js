@@ -3,9 +3,11 @@ import Chat from '../components/Chat/Chat';
 class WebSocketClient {
   constructor() {
     this.socket = null;
+    this.chat = null;
     this.handlers = {
       signin_response: this.handleSigninResponse,
       login_response: this.handleLoginResponse,
+      new_message: this.handleNewMessage,
     };
   }
 
@@ -71,13 +73,13 @@ class WebSocketClient {
   handleSigninResponse(response) {
     if (response.data && response.data.success) {
       const container = document.getElementById('chat-container');
-      const chat = new Chat(
+      this.chat = new Chat(
         container,
         this.socket,
         response.data.user,
         response.data.messages,
       );
-      chat.init();
+      this.chat.init();
     } else if (response.data && response.data.error) {
       WebSocketClient.displayError(response.data.error);
     }
@@ -101,6 +103,15 @@ class WebSocketClient {
 
     errorEl.style.display = 'block';
     errorEl.innerText = errorMessage;
+  }
+
+  handleNewMessage(response) {
+    if (response && response.data) {
+      const newMessage = response.data;
+      if (this.chat) {
+        this.chat.addNewPost(newMessage);
+      }
+    }
   }
 }
 

@@ -21,6 +21,7 @@ export default class Chat {
     this.socket = socket;
     this.user = user;
     this.posts = posts;
+    this.newMessage = null;
     this.recorder = null;
     this.mediaType = null;
     this.mediaFile = null;
@@ -98,6 +99,10 @@ export default class Chat {
 
   addSavedPosts() {
     this.posts.forEach((post) => new Post(post));
+  }
+
+  addNewPost(newMessage) {
+    this.newPost = new Post(newMessage);
   }
 
   changeHeightTextarea() {
@@ -192,8 +197,7 @@ export default class Chat {
     });
 
     if (resultFetch.ok) {
-      const newMessage = await resultFetch.json();
-      this.newPost = new Post(newMessage);
+      this.newMessage = await resultFetch.json();
     } else {
       console.error('Error:', resultFetch.status);
     }

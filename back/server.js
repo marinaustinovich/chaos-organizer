@@ -31,6 +31,14 @@ const start = async () => {
       ctx.body = "Welcome to server!";
     });
 
+    const audioExtensions = [
+      "mp3", "wav", "ogg", "flac", "aac", "m4a", "aiff", "au", "wma", "alac", "amr"
+    ];
+    
+    const videoExtensions = [
+      "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "m4v", "mpg", "mpeg", "3gp", "f4v", "m2ts", "m4p", "mj2", "mts", "ogv", "qt", "vob"
+    ];
+    
     router.post("/messages", async (ctx) => {
       try {
         const { user, message } = ctx.request.body;
@@ -39,29 +47,36 @@ const start = async () => {
 
         const files = ctx.request.files;
         let filePaths = {};
-    
+
         try {
           if (files.file) {
-            filePaths.file = await  moveFile(files.file, 'files');
-          }
-      
-          if (files.audio) {
-            filePaths.audio = await moveFile(files.audio, 'audio');
-          }
-      
-          if (files.video) {
-            filePaths.video = await  moveFile(files.video, 'video');
+            const fileExtension = files.file.originalFilename.split('.').pop().toLowerCase();
+
+            if (audioExtensions.includes(fileExtension)) {
+              filePaths.audio = await moveFile(files.file, 'audio');
+            } else if (videoExtensions.includes(fileExtension)) {
+              filePaths.video = await moveFile(files.file, 'video');
+            } else {
+              filePaths.file = await moveFile(files.file, 'files');
+            }
           }
 
-      } catch (error) {
-          console.error('Failed to move file:', error);
-      }
-    
+          if (files.audio) {
+            filePaths.audio = await moveFile(files.audio, "audio");
+          }
+
+          if (files.video) {
+            filePaths.video = await moveFile(files.video, "video");
+          }
+        } catch (error) {
+          console.error("Failed to move file:", error);
+        }
+
         const newMessage = await addMessage({
           userId,
           text,
           location,
-          ...filePaths
+          ...filePaths,
         });
         ctx.body = newMessage;
       } catch (error) {

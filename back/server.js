@@ -43,15 +43,35 @@ const start = async () => {
     });
 
     router.get("/messages", async (ctx) => {
-      const {userId, lastMessageDate } = ctx.query;
-     
+      const { userId, lastMessageDate, text, file, video, audio } = ctx.query;
+      const hasFile = file === 'true';
+      const hasVideo = video === 'true';
+      const hasAudio = audio === 'true';
+    
       try {
-        const userMessages = await findUserMessages(userId, lastMessageDate);
+        const userMessages = await findUserMessages({
+          userId,
+          lastMessageDate,
+          text,
+          file: hasFile,
+          video: hasVideo,
+          audio: hasAudio
+        });
+    
         ctx.body = userMessages;
       } catch (error) {
         ctx.status = 500;
         ctx.body = { error: "Failed to retrieve messages" };
       }
+      // const {userId, lastMessageDate } = ctx.query;
+     
+      // try {
+      //   const userMessages = await findUserMessages(userId, lastMessageDate);
+      //   ctx.body = userMessages;
+      // } catch (error) {
+      //   ctx.status = 500;
+      //   ctx.body = { error: "Failed to retrieve messages" };
+      // }
     });
     
     

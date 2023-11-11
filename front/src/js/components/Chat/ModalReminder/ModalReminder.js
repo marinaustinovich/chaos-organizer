@@ -28,7 +28,7 @@ export default class ModalReminder {
 
   drawUi() {
     this.timeInput = createElement('input', {
-      classes: ['time-input'],
+      classes: ['field', 'time-input'],
       attributes: {
         type: 'text',
         id: 'time-input',
@@ -36,7 +36,7 @@ export default class ModalReminder {
       },
     });
     this.textInput = createElement('input', {
-      classes: ['text-input'],
+      classes: ['field', 'text-input'],
       attributes: {
         type: 'text',
         id: 'text-input',

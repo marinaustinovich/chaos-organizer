@@ -25,7 +25,7 @@ export default class ModalGeo {
 
   drawUi() {
     this.input = createElement('input', {
-      classes: ['geo-input'],
+      classes: ['field', 'geo-input'],
       attributes: {
         type: 'text',
         id: 'geo-input',

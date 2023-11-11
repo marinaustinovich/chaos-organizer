@@ -1,7 +1,5 @@
 .text-input,
 .time-input {
-  border: 1px solid black;
-  padding: 0.5rem;
   width: 100%;
   margin-top: 10px;
 }

@@ -1,7 +1,13 @@
 .actions {
+  width: 85%;;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 10px;
+}
+
+.search-input {
+  width: 100%;
 }
 
 .search-button {

@@ -20,6 +20,7 @@ export default class Chat {
     this.socket = socket;
     this.user = user;
     this.posts = posts;
+    this.handleSearchText = this.handleSearchText.bind(this);
     this.newMessage = null;
     this.recorder = null;
     this.mediaType = null;
@@ -63,7 +64,7 @@ export default class Chat {
     chatWindow.append(this.chatHeader, this.messagesSection, createPostSection);
     this.container.append(this.modalWindow, chatWindow);
     this.userInfoElement = new UserInfo(this.chatHeader, this.user);
-    this.actionsContainer = new Actions(this.chatHeader, this.user);
+    this.actionsContainer = new Actions(this.chatHeader, this.user, this.handleSearchText);
     this.emojisElement = new Emoji(createPostSection);
     this.recorder = new Recorder(createPostSection);
     this.uploadElement = new FileUploader(
@@ -74,6 +75,7 @@ export default class Chat {
 
   createPostSection() {
     this.textarea = createElement('textarea', {
+      classes: ['field'],
       attributes: {
         id: 'post-content',
         rows: '2',
@@ -110,9 +112,9 @@ export default class Chat {
     this.messagesSection.addEventListener('scroll', () => this.handleScroll());
   }
 
-  addSavedPosts() {
+  addSavedPosts(isNewPost = false) {
     this.messagesSection.innerHTML = '';
-    this.posts.forEach((post) => new Post(post));
+    this.posts.forEach((post) => new Post(post, isNewPost));
   }
 
   requestNotificationPermission() {
@@ -254,5 +256,10 @@ export default class Chat {
     } catch (error) {
       this.modalNotification = new ModalNotification(messages.ERROR_GOING_WRONG);
     }
+  }
+
+  async handleSearchText(searchResults) {
+    this.posts = searchResults;
+    this.addSavedPosts(true);
   }
 }

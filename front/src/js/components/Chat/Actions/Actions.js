@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce';
-import { baseUrl, messages } from '../../../constants';
+import { baseUrl, mediaTypes, messages } from '../../../constants';
 import { createElement } from '../../../utils';
 import { Dropdown, ModalNotification } from '../../commons';
 import ModalReminder from '../ModalReminder/ModalReminder';
@@ -25,19 +25,8 @@ export default class Actions {
   }
 
   createActions() {
-    this.searchButton = createElement('button', {
-      classes: ['btn-action', 'search-button'],
-      attributes: {
-        type: 'button',
-      },
-    });
-
-    this.addReminderButton = createElement('button', {
-      classes: ['btn-action', 'reminder-button'],
-      attributes: {
-        type: 'button',
-      },
-    });
+    this.searchButton = Actions.createButton('search-button', 'button');
+    this.addReminderButton = Actions.createButton('reminder-button', 'button');
 
     this.searchInput = createElement('input', {
       classes: ['search-input', 'field', 'hidden'],
@@ -53,8 +42,35 @@ export default class Actions {
       children: [this.searchInput, this.searchButton, this.addReminderButton],
     });
 
-    this.dropdown = new Dropdown(this.actionsContainer, messages.DROPDOWN_ITEMS);
+    this.dropdownItems = [
+      {
+        text: messages.DROPDOWN_ITEMS.CLEAR_CHAT,
+        onClick: () => this.clearChat(),
+      },
+      {
+        text: messages.DROPDOWN_ITEMS.UPLOADED_FILES,
+        onClick: () => this.onFilter(mediaTypes.FILE),
+      },
+      {
+        text: messages.DROPDOWN_ITEMS.VIDEOS,
+        onClick: () => this.onFilter(mediaTypes.VIDEO),
+      },
+      {
+        text: messages.DROPDOWN_ITEMS.AUDIOS,
+        onClick: () => this.onFilter(mediaTypes.AUDIO),
+      },
+      {
+        text: messages.DROPDOWN_ITEMS.CLEAR_FILTERS,
+        onClick: () => this.onFilter(),
+      },
+    ];
+
+    this.dropdown = new Dropdown(this.actionsContainer, this.dropdownItems);
     this.container.append(this.actionsContainer);
+  }
+
+  static createButton(className, type) {
+    return createElement('button', { classes: ['btn-action', className], attributes: { type } });
   }
 
   events() {
@@ -64,7 +80,10 @@ export default class Actions {
   }
 
   showModalReminder() {
-    this.modal = new ModalReminder(document.querySelector('.modal-window'), this.user.id);
+    this.modal = new ModalReminder(
+      document.querySelector('.modal-window'),
+      this.user.id,
+    );
   }
 
   showSearchInput() {
@@ -75,13 +94,56 @@ export default class Actions {
     const searchText = this.searchInput.value;
 
     try {
-      const response = await fetch(`${baseUrl}messages?userId=${this.user.id}&text=${encodeURIComponent(searchText)}`);
+      const response = await fetch(
+        `${baseUrl}messages?userId=${this.user.id}&text=${encodeURIComponent(
+          searchText,
+        )}`,
+      );
       if (response.ok) {
         const searchResults = await response.json();
         this.onSearchResults(searchResults);
+      } else {
+        this.handleResponseError('error');
       }
     } catch (error) {
-      this.modalNotification = new ModalNotification(messages.ERROR_GOING_WRONG);
+      this.handleResponseError(error);
     }
   }, 300);
+
+  async onFilter(params) {
+    const url = params ? `${baseUrl}messages?userId=${this.user.id}&${params}=true` : `${baseUrl}messages?userId=${this.user.id}`;
+
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const searchResults = await response.json();
+        this.onSearchResults(searchResults);
+      } else {
+        this.handleResponseError('error');
+      }
+    } catch (error) {
+      this.handleResponseError(error);
+    }
+  }
+
+  async clearChat() {
+    try {
+      const response = await fetch(`${baseUrl}messages?userId=${this.user.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        this.onSearchResults([]);
+      } else {
+        this.handleResponseError('error');
+      }
+    } catch (error) {
+      this.handleResponseError(error);
+    }
+  }
+
+  handleResponseError(error) {
+    console.error(error);
+    this.modalNotification = new ModalNotification(messages.ERROR_GOING_WRONG);
+  }
 }

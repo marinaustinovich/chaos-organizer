@@ -22,14 +22,13 @@
   "PLACEHOLDER_TEXT": "Please enter something",
   "BUTTON_CLOSE": "CLOSE",
   "BUTTON_OK": "OK",
-  "DROPDOWN_ITEMS": [
-    "Clear Chat",
-    "Uploaded Files",
-    "Videos",
-    "Audios",
-    "Images",
-    "Documents"
-  ],
+  "DROPDOWN_ITEMS": {
+    "CLEAR_CHAT": "Clear Chat",
+    "UPLOADED_FILES": "Uploaded Files",
+    "VIDEOS": "Videos",
+    "AUDIOS": "Audios",
+    "CLEAR_FILTERS": "Clear Filters"
+  },
   "NOTIFICATION_MAX_MEDIA_SIZE_LIMIT": "Recording stopped: file size exceeds the limit of 20MB.",
   "NOTIFICATION_REMINDER": "Permission for notifications has been granted. To revoke this permission, change the notification settings for this site"
 }

@@ -17,34 +17,39 @@ export default class Dropdown {
   }
 
   createDropdown() {
-    const moreButton = createElement('button', {
+    this.moreButton = createElement('button', {
       classes: ['btn-action', 'more-button'],
       attributes: {
         type: 'button',
       },
     });
 
-    const dropdownContent = createElement('div', {
+    this.dropdownContent = createElement('div', {
       classes: ['dropdown-content'],
-      children: this.items.map((item) => createElement('button', {
-        classes: ['dropdown-item'],
-        attributes: { type: 'button' },
-        textContent: item,
-      })),
+      children: this.items.map((item) => {
+        const button = createElement('button', {
+          classes: ['dropdown-item'],
+          attributes: { type: 'button' },
+          textContent: item.text,
+        });
+
+        if (item.onClick && typeof item.onClick === 'function') {
+          button.addEventListener('click', item.onClick);
+        }
+
+        return button;
+      }),
     });
 
     const dropdown = createElement('div', {
       classes: ['dropdown'],
-      children: [moreButton, dropdownContent],
+      children: [this.moreButton, this.dropdownContent],
     });
 
     this.container.appendChild(dropdown);
   }
 
   events() {
-    this.moreButton = this.container.querySelector('.more-button');
-    this.dropdownContent = this.container.querySelector('.dropdown-content');
-
     this.moreButton.addEventListener('click', () => this.toggleDropdown());
   }
 

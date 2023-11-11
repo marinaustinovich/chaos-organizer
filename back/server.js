@@ -11,11 +11,15 @@ const sequelize = require("./database.js");
 const Reminder = require("./models/reminder");
 const Messages = require("./models/message");
 const User = require("./models/user");
-const addUser = require("./actions/addUser");
-const addMessage = require("./actions/addMessage");
-const findUserMessages = require("./actions/findUserMessages");
-const moveFile = require("./actions/moveFile");
-const {setReminders, activateReminder} = require("./actions/setReminders");
+const {
+  addUser,
+  addMessage,
+  deleteMessagesByUserId,
+  findUserMessages,
+  moveFile,
+  setReminders,
+  activateReminder,
+} = require("./actions");
 const {
   audioExtensions,
   videoExtensions,
@@ -44,10 +48,10 @@ const start = async () => {
 
     router.get("/messages", async (ctx) => {
       const { userId, lastMessageDate, text, file, video, audio } = ctx.query;
-      const hasFile = file === 'true';
-      const hasVideo = video === 'true';
-      const hasAudio = audio === 'true';
-    
+      const hasFile = file === "true";
+      const hasVideo = video === "true";
+      const hasAudio = audio === "true";
+
       try {
         const userMessages = await findUserMessages({
           userId,
@@ -55,26 +59,15 @@ const start = async () => {
           text,
           file: hasFile,
           video: hasVideo,
-          audio: hasAudio
+          audio: hasAudio,
         });
-    
+
         ctx.body = userMessages;
       } catch (error) {
         ctx.status = 500;
         ctx.body = { error: "Failed to retrieve messages" };
       }
-      // const {userId, lastMessageDate } = ctx.query;
-     
-      // try {
-      //   const userMessages = await findUserMessages(userId, lastMessageDate);
-      //   ctx.body = userMessages;
-      // } catch (error) {
-      //   ctx.status = 500;
-      //   ctx.body = { error: "Failed to retrieve messages" };
-      // }
     });
-    
-    
 
     router.post("/messages", async (ctx) => {
       try {
@@ -134,6 +127,21 @@ const start = async () => {
         console.error(error);
         ctx.status = 500;
         ctx.body = { error: "Failed to add message" };
+      }
+    });
+
+    router.delete("/messages", async (ctx) => {
+      const { userId } = ctx.query;
+
+      try {
+        await deleteMessagesByUserId(userId);
+
+        ctx.status = 200;
+        ctx.body = { message: "Messages deleted successfully" };
+      } catch (error) {
+        console.error("Failed to delete messages:", error);
+        ctx.status = 500;
+        ctx.body = { error: "Failed to delete messages" };
       }
     });
 

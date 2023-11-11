@@ -6,13 +6,14 @@ import { baseUrl, mediaTypes } from '../../../constants';
 import './post.css';
 
 export default class Post {
-  constructor(data) {
+  constructor(data, isNewPost = false) {
     this.data = data;
     if (this.data.video) this.mediaUrl = data.video;
     if (this.data.audio) this.mediaUrl = data.audio;
     if (this.data.file) this.fileSrc = data.file;
 
     this.userId = data.userId;
+    this.isNewPost = isNewPost;
     this.post = null;
     this.posts = null;
     this.createPost();
@@ -27,10 +28,14 @@ export default class Post {
 
     this.post = createElement('div', { classes: ['post'], children: [date, textPost, file, media, geodata] });
     this.posts = document.getElementById('posts');
-    this.posts.insertBefore(this.post, this.posts.firstChild);
+
+    this.posts.appendChild(this.post);
+
+    if (this.isNewPost) {
+      Post.scrollToBottom();
+    }
 
     Post.clearForm();
-    Post.scrollToTop();
   }
 
   createMediaElement() {
@@ -92,6 +97,7 @@ export default class Post {
     const geodata = createElement('div', { classes: ['geodata'], textContent: `[${this.data.location.latitude}, ${this.data.location.longitude}] ` });
     const geodataIcon = createElement('span', { classes: ['geodata-icon'] });
     geodata.appendChild(geodataIcon);
+
     return geodata;
   }
 
@@ -100,8 +106,8 @@ export default class Post {
     document.querySelector('.preview-list').innerHTML = '';
   }
 
-  static scrollToTop() {
+  static scrollToBottom() {
     const containerPosts = document.getElementById('posts');
-    containerPosts.scrollTo({ top: 0, behavior: 'smooth' });
+    containerPosts.scrollTo({ top: containerPosts.scrollHeight, behavior: 'smooth' });
   }
 }

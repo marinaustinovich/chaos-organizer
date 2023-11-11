@@ -10,9 +10,6 @@ import {
 
 import './chat.css';
 
-// import mergeMessages from './mergeMessages';
-// import sortMessagesByDate from './sortMessagesByDate';
-
 export default class Chat {
   constructor(container, socket, user, posts = []) {
     if (!(container instanceof HTMLElement)) {
@@ -57,13 +54,13 @@ export default class Chat {
     this.modalWindow = createElement('div', { classes: ['modal-window'] });
     const chatWindow = createElement('div', { classes: ['chat-window'] });
     this.chatHeader = createElement('section', { classes: ['chat-header'] });
-    const messagesSection = createElement('section', {
+    this.messagesSection = createElement('section', {
       classes: ['messages'],
       attributes: { id: 'posts' },
     });
     const createPostSection = this.createPostSection();
 
-    chatWindow.append(this.chatHeader, messagesSection, createPostSection);
+    chatWindow.append(this.chatHeader, this.messagesSection, createPostSection);
     this.container.append(this.modalWindow, chatWindow);
     this.userInfoElement = new UserInfo(this.chatHeader, this.user);
     this.actionsContainer = new Actions(this.chatHeader, this.user);
@@ -110,9 +107,11 @@ export default class Chat {
     this.textarea.addEventListener('input', () => this.changeHeightTextarea());
     this.textarea.addEventListener('keydown', (e) => this.addPost(e));
     this.textarea.addEventListener('click', () => this.closeEmojiWindow());
+    this.messagesSection.addEventListener('scroll', () => this.handleScroll());
   }
 
   addSavedPosts() {
+    this.messagesSection.innerHTML = '';
     this.posts.forEach((post) => new Post(post));
   }
 
@@ -129,7 +128,8 @@ export default class Chat {
   }
 
   addNewPost(newMessage) {
-    this.newPost = new Post(newMessage);
+    this.posts.push(newMessage);
+    this.newPost = new Post(newMessage, true);
   }
 
   changeHeightTextarea() {
@@ -227,6 +227,32 @@ export default class Chat {
       this.newMessage = await resultFetch.json();
     } else {
       console.error('Error:', resultFetch.status);
+      this.modalNotification = new ModalNotification(messages.ERROR_GOING_WRONG);
+    }
+  }
+
+  async handleScroll() {
+    const isTop = this.messagesSection.scrollTop === 0;
+
+    if (isTop) {
+      await this.loadMoreMessages();
+    }
+  }
+
+  async loadMoreMessages() {
+    const lastMessageDate = this.posts.length > 0 ? this.posts[0].date : null;
+
+    try {
+      const response = await fetch(`${baseUrl}messages?userId=${this.user.id}&lastMessageDate=${lastMessageDate}`);
+      if (response.ok) {
+        const olderPosts = await response.json();
+        const nonDuplicatePosts = olderPosts.filter((o) => !this.posts.find((p) => p.id === o.id));
+
+        this.posts.unshift(...nonDuplicatePosts);
+        this.addSavedPosts();
+      }
+    } catch (error) {
+      this.modalNotification = new ModalNotification(messages.ERROR_GOING_WRONG);
     }
   }
 }

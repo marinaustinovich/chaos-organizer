@@ -42,6 +42,20 @@ const start = async () => {
       ctx.body = "Welcome to server!";
     });
 
+    router.get("/messages", async (ctx) => {
+      const {userId, lastMessageDate } = ctx.query;
+     
+      try {
+        const userMessages = await findUserMessages(userId, lastMessageDate);
+        ctx.body = userMessages;
+      } catch (error) {
+        ctx.status = 500;
+        ctx.body = { error: "Failed to retrieve messages" };
+      }
+    });
+    
+    
+
     router.post("/messages", async (ctx) => {
       try {
         const { user, message } = ctx.request.body;
@@ -106,7 +120,6 @@ const start = async () => {
     router.post("/addReminder", async (ctx) => {
       try {
         const { time, message, userId } = ctx.request.body;
-        console.log(time);
 
         const newReminder = await Reminder.create({
           userId,

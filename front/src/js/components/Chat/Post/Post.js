@@ -25,8 +25,13 @@ export default class Post {
     const media = this.createMediaElement();
     const file = this.createFileElement();
     const geodata = this.createGeodataElement();
+    const children = [date, textPost, file, media];
 
-    this.post = createElement('div', { classes: ['post'], children: [date, textPost, file, media, geodata] });
+    if (geodata) {
+      children.push(geodata);
+    }
+
+    this.post = createElement('div', { classes: ['post'], children });
     this.posts = document.getElementById('posts');
 
     this.posts.appendChild(this.post);
@@ -94,6 +99,10 @@ export default class Post {
   }
 
   createGeodataElement() {
+    if (!this.data.location) {
+      return null;
+    }
+
     const geodata = createElement('div', { classes: ['geodata'], textContent: `[${this.data.location.latitude}, ${this.data.location.longitude}] ` });
     const geodataIcon = createElement('span', { classes: ['geodata-icon'] });
     geodata.appendChild(geodataIcon);

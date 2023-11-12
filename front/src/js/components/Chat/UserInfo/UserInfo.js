@@ -1,3 +1,4 @@
+import { baseUrl } from '../../../constants';
 import { createElement } from '../../../utils';
 
 import './user-info.css';
@@ -21,7 +22,7 @@ export default class UserInfo {
       classes: ['user-avatar'],
       children: [createElement('img', {
         attributes: {
-          src: this.user.avatarURL,
+          src: `${baseUrl}${this.user.avatarURL}`,
           alt: 'User Avatar',
         },
       })],

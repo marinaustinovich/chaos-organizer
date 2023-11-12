@@ -30,6 +30,7 @@ const Message = sequelize.define('Message', {
   date: {
     type: DataTypes.DATE,
     allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
   userId: {
     type: DataTypes.UUID,

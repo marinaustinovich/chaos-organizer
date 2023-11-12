@@ -1,4 +1,6 @@
-const userId = 1;
+const { v4: uuidv4 } = require("uuid");
+
+const userId = uuidv4();
 
 const reminders = [
   {
@@ -61,10 +63,38 @@ const defaultUser = {
   name: "test",
   password: "test1test1",
   online: false,
-  avatarURL: "http://localhost:7070/files/avatar.jpg",
+  avatarURL: "files/avatar.jpg",
+};
+
+const defaultMessageText = {
+  id: uuidv4(),
+  text: "text 😁",
+  userId,
+};
+
+const defaultMessageFile = {
+  id: uuidv4(),
+  text: "file",
+  userId,
+  file: "files/flower.jpg"
+};
+
+const defaultMessageVideo = {
+  id: uuidv4(),
+  text: "video",
+  userId,
+  video: "video/flowers.webm"
+};
+
+const defaultMessageAudio = {
+  id: uuidv4(),
+  text: "audio",
+  userId,
+  audio: "audio/lunar.mp3"
 };
 
 const users = [defaultUser];
+const messages = [defaultMessageText, defaultMessageFile, defaultMessageVideo, defaultMessageAudio];
 
 const audioExtensions = [
   "mp3",
@@ -107,4 +137,5 @@ module.exports = {
   videoExtensions,
   reminders,
   users,
+  messages,
 };

@@ -25,6 +25,7 @@ const {
   videoExtensions,
   reminders,
   users,
+  messages
 } = require("./constants");
 const router = new Router();
 const server = new WebSocket.Server({ port: 7000 });
@@ -35,6 +36,7 @@ const start = async () => {
     await sequelize.sync({ force: true });
     await User.bulkCreate(users);
     await Reminder.bulkCreate(reminders);
+    await Messages.bulkCreate(messages);
 
     app.use(cors());
     app.use(koaBody({ multipart: true }));

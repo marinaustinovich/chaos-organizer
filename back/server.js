@@ -181,6 +181,7 @@ const start = async () => {
     app.use(router.routes()).use(router.allowedMethods());
 
     server.on("connection", (socket) => {
+      console.log(`New WebSocket connection`);
       socket.send(JSON.stringify({ text: "Welcome to the WebSocket server!" }));
 
       socket.on("message", async (instance) => {
@@ -254,7 +255,7 @@ const start = async () => {
 
     const port = 7070;
     app.listen(port, function () {
-      console.log("Server running on http://localhost:7070");
+      console.log("Server running on port 7070");
     });
   } catch (e) {
     console.log(e);

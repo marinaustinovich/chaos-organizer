@@ -22,7 +22,9 @@ class WebSocketClient {
   init() {
     return new Promise((resolve, reject) => {
       if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-        this.socket = new WebSocket('ws://localhost:7000');
+        this.socket = new WebSocket('wss://back-chaos-organizer.onrender.com/');
+      
+        // this.socket = new WebSocket('ws://localhost:7000');
         this.addEventListeners(resolve, reject);
       } else if (this.socket.readyState === WebSocket.OPEN) {
         resolve();
@@ -96,7 +98,7 @@ class WebSocketClient {
   }
 
   static handleError(event) {
-    console.error(`Error: ${event}`);
+    console.error(`Error: ${event.target}`);
   }
 
   static displayError(errorMessage) {

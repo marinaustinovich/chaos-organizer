@@ -12,7 +12,7 @@ const addUser = async (name, password) => {
       name,
       password,
       online: true,
-      avatarURL: 'http://localhost:7070/files/avatar.jpg',
+      avatarURL: 'files/avatar.jpg'
     });
   } catch (error) {
     console.error('Error adding user:', error);

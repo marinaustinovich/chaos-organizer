@@ -257,7 +257,7 @@ const start = async () => {
       });
     });
 
-    const port = 7000;
+    const httpPort = 7000;
     app.listen(port, function () {
       console.log(`HTTP Server running on port ${httpPort}`);
     });

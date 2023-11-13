@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const http = require('http');
 const cors = require("@koa/cors");
 const Koa = require("koa");
 const { koaBody } = require("koa-body");
@@ -28,8 +29,10 @@ const {
   messages
 } = require("./constants");
 const router = new Router();
-const server = new WebSocket.Server({ port: 7071 });
 const app = new Koa();
+
+const httpServer = http.createServer(app.callback());
+const server = new WebSocket.Server({ server: httpServer });
 
 const start = async () => {
   try {
@@ -257,10 +260,10 @@ const start = async () => {
       });
     });
 
-    const httpPort = 7000;
-    app.listen(port, function () {
-      console.log(`HTTP Server running on port ${httpPort}`);
-    });
+    const port = process.env.PORT || 7000;
+    httpServer.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+  });
   } catch (e) {
     console.log(e);
   }

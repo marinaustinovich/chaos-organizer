@@ -38,7 +38,7 @@ const start = async () => {
     await Reminder.bulkCreate(reminders);
     await Messages.bulkCreate(messages);
 
-    app.use(cors());
+    app.use(cors({ origin: '*' }));
     app.use(koaBody({ multipart: true }));
 
     const staticPath = path.join(__dirname, "public");
@@ -181,7 +181,6 @@ const start = async () => {
     app.use(router.routes()).use(router.allowedMethods());
 
     server.on("connection", (socket) => {
-      console.log(`New WebSocket connection`);
       socket.send(JSON.stringify({ text: "Welcome to the WebSocket server!" }));
 
       socket.on("message", async (instance) => {

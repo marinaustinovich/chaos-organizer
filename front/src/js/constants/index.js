@@ -5,8 +5,10 @@ import mediaTypes from './mediaTypes.json';
 // const baseUrl = 'http://localhost:7070/';
 
 // TODO production
-const baseUrl = 'https://back-chaos-organizer.onrender.com/';
+const path = 'back-chaos-organizer.onrender.com/';
+const WebSocketBaseUrl = `wss://${path}`;
+const baseUrl = `https://${path}`;
 
 export {
-  messages, formId, mediaTypes, baseUrl,
+  messages, formId, mediaTypes, baseUrl, WebSocketBaseUrl,
 };

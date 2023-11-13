@@ -1,8 +1,14 @@
 # Дипломное задание к курсу «Продвинутый JavaScript в браузере». Chaos Organizer
 ---
-
-
 ###### tags: `netology` `advanced js in html`
+
+## Live Demo
+
+Посетите [Live Demo]([URL_ВАШЕГО_ПРИЛОЖЕНИЯ](https://chaos-organizer.onrender.com)) для просмотра размещенного приложения.
+
+Данные пользователя для доступа: 
+ - name: test;
+ - password: test1test1;
 
 ## Легенда
 

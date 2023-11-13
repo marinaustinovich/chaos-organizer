@@ -4,7 +4,7 @@
 
 ## Live Demo
 
-Посетите [Live Demo]([URL_ВАШЕГО_ПРИЛОЖЕНИЯ](https://chaos-organizer.onrender.com)) для просмотра размещенного приложения.
+Посетите [Live Demo](https://chaos-organizer.onrender.com) для просмотра размещенного приложения.
 
 Данные пользователя для доступа: 
  - name: test;

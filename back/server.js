@@ -28,7 +28,7 @@ const {
   messages
 } = require("./constants");
 const router = new Router();
-const server = new WebSocket.Server({ port: 7000 });
+const server = new WebSocket.Server({ port: 7071 });
 const app = new Koa();
 
 const start = async () => {
@@ -40,6 +40,11 @@ const start = async () => {
 
     app.use(cors({ origin: '*' }));
     app.use(koaBody({ multipart: true }));
+
+    app.use(async (ctx, next) => {
+      await next();
+      ctx.set('Access-Control-Allow-Origin', '*');
+    });
 
     const staticPath = path.join(__dirname, "public");
     app.use(static(staticPath));
@@ -252,9 +257,9 @@ const start = async () => {
       });
     });
 
-    const port = 7070;
+    const port = 7000;
     app.listen(port, function () {
-      console.log("Server running on port 7070");
+      console.log(`HTTP Server running on port ${httpPort}`);
     });
   } catch (e) {
     console.log(e);
